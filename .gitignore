@@ -1,11 +1,11 @@
-# Binaries for programs and plugins
+# Binaries Files
 *.exe
 *.exe~
 *.dll
 *.so
 *.dylib
 
-# Output
+# Output Files
 *.test
 *.out
 *.log
@@ -14,3 +14,6 @@
 
 # IDE Files
 /.idea
+
+# Config Files
+.env
