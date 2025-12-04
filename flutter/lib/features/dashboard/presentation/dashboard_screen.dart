@@ -1,16 +1,19 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 import 'package:cashlens/core/utils/demo_data.dart';
+import 'package:cashlens/core/providers/currency_provider.dart';
+import 'package:cashlens/core/models/currency.dart';
 import 'package:intl/intl.dart';
 
-class DashboardScreen extends StatefulWidget {
+class DashboardScreen extends ConsumerStatefulWidget {
   const DashboardScreen({super.key});
 
   @override
-  State<DashboardScreen> createState() => _DashboardScreenState();
+  ConsumerState<DashboardScreen> createState() => _DashboardScreenState();
 }
 
-class _DashboardScreenState extends State<DashboardScreen>
+class _DashboardScreenState extends ConsumerState<DashboardScreen>
     with SingleTickerProviderStateMixin {
   late AnimationController _animationController;
   final GlobalKey<ScaffoldState> _scaffoldKey = GlobalKey<ScaffoldState>();
@@ -35,7 +38,16 @@ class _DashboardScreenState extends State<DashboardScreen>
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
     final size = MediaQuery.of(context).size;
-    final currencyFormat = NumberFormat.currency(symbol: '\$', decimalDigits: 2);
+    final currencyAsync = ref.watch(currencyNotifierProvider);
+    
+    final currencyFormat = currencyAsync.when(
+      data: (currency) => NumberFormat.currency(
+        symbol: currency.symbol,
+        decimalDigits: currency.code == 'JPY' || currency.code == 'KRW' ? 0 : 2,
+      ),
+      loading: () => NumberFormat.currency(symbol: '\$', decimalDigits: 2),
+      error: (_, __) => NumberFormat.currency(symbol: '\$', decimalDigits: 2),
+    );
 
     return Scaffold(
       key: _scaffoldKey,
@@ -707,40 +719,7 @@ class _DashboardScreenState extends State<DashboardScreen>
   void _showSettingsDialog(BuildContext context) {
     showDialog(
       context: context,
-      builder: (context) => AlertDialog(
-        title: const Text('Settings'),
-        content: Column(
-          mainAxisSize: MainAxisSize.min,
-          children: [
-            ListTile(
-              leading: const Icon(Icons.palette),
-              title: const Text('Theme'),
-              subtitle: const Text('Coming soon'),
-              onTap: () {},
-            ),
-            ListTile(
-              leading: const Icon(Icons.language),
-              title: const Text('Language'),
-              subtitle: const Text('Coming soon'),
-              onTap: () {},
-            ),
-            ListTile(
-              leading: const Icon(Icons.logout),
-              title: const Text('Logout'),
-              onTap: () {
-                Navigator.pop(context);
-                context.go('/');
-              },
-            ),
-          ],
-        ),
-        actions: [
-          TextButton(
-            onPressed: () => Navigator.pop(context),
-            child: const Text('Close'),
-          ),
-        ],
-      ),
+      builder: (context) => _SettingsDialog(),
     );
   }
 
@@ -793,6 +772,160 @@ class _DashboardScreenState extends State<DashboardScreen>
         const SizedBox(height: 16),
         const Text('A personal finance management app for tracking daily cash flow.'),
       ],
+    );
+  }
+}
+
+class _SettingsDialog extends ConsumerWidget {
+  @override
+  Widget build(BuildContext context, WidgetRef ref) {
+    final theme = Theme.of(context);
+    final currencyAsync = ref.watch(currencyNotifierProvider);
+
+    return AlertDialog(
+      title: const Text('Settings'),
+      content: SingleChildScrollView(
+        child: Column(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            // Currency Setting
+            currencyAsync.when(
+              data: (currentCurrency) => ListTile(
+                leading: const Icon(Icons.attach_money),
+                title: const Text('Currency'),
+                subtitle: Text('${currentCurrency.code} - ${currentCurrency.name}'),
+                trailing: const Icon(Icons.chevron_right),
+                onTap: () {
+                  Navigator.pop(context);
+                  _showCurrencySelector(context, ref, currentCurrency);
+                },
+              ),
+              loading: () => const ListTile(
+                leading: Icon(Icons.attach_money),
+                title: Text('Currency'),
+                subtitle: Text('Loading...'),
+              ),
+              error: (_, __) => const ListTile(
+                leading: Icon(Icons.attach_money),
+                title: Text('Currency'),
+                subtitle: Text('Error loading currency'),
+              ),
+            ),
+            const Divider(),
+            
+            // Theme Setting
+            ListTile(
+              leading: const Icon(Icons.palette),
+              title: const Text('Theme'),
+              subtitle: const Text('Coming soon'),
+              onTap: () {},
+            ),
+            
+            // Language Setting
+            ListTile(
+              leading: const Icon(Icons.language),
+              title: const Text('Language'),
+              subtitle: const Text('Coming soon'),
+              onTap: () {},
+            ),
+            
+            const Divider(),
+            
+            // Logout
+            ListTile(
+              leading: Icon(Icons.logout, color: theme.colorScheme.error),
+              title: Text(
+                'Logout',
+                style: TextStyle(color: theme.colorScheme.error),
+              ),
+              onTap: () {
+                Navigator.pop(context);
+                context.go('/');
+              },
+            ),
+          ],
+        ),
+      ),
+      actions: [
+        TextButton(
+          onPressed: () => Navigator.pop(context),
+          child: const Text('Close'),
+        ),
+      ],
+    );
+  }
+
+  void _showCurrencySelector(
+    BuildContext context,
+    WidgetRef ref,
+    Currency currentCurrency,
+  ) {
+    showDialog(
+      context: context,
+      builder: (context) => AlertDialog(
+        title: const Text('Select Currency'),
+        content: SizedBox(
+          width: double.maxFinite,
+          child: ListView.builder(
+            shrinkWrap: true,
+            itemCount: SupportedCurrencies.all.length,
+            itemBuilder: (context, index) {
+              final currency = SupportedCurrencies.all[index];
+              final isSelected = currency.code == currentCurrency.code;
+              
+              return ListTile(
+                leading: CircleAvatar(
+                  backgroundColor: isSelected
+                      ? Theme.of(context).colorScheme.primary
+                      : Theme.of(context).colorScheme.surfaceContainerHighest,
+                  child: Text(
+                    currency.symbol,
+                    style: TextStyle(
+                      color: isSelected
+                          ? Theme.of(context).colorScheme.onPrimary
+                          : Theme.of(context).colorScheme.onSurface,
+                      fontWeight: FontWeight.bold,
+                    ),
+                  ),
+                ),
+                title: Text(
+                  currency.name,
+                  style: TextStyle(
+                    fontWeight: isSelected ? FontWeight.bold : FontWeight.normal,
+                  ),
+                ),
+                subtitle: Text('${currency.code} (${currency.symbol})'),
+                trailing: isSelected
+                    ? Icon(
+                        Icons.check_circle,
+                        color: Theme.of(context).colorScheme.primary,
+                      )
+                    : null,
+                onTap: () async {
+                  await ref
+                      .read(currencyNotifierProvider.notifier)
+                      .setCurrency(currency);
+                  if (context.mounted) {
+                    Navigator.pop(context);
+                    ScaffoldMessenger.of(context).showSnackBar(
+                      SnackBar(
+                        content: Text('Currency changed to ${currency.code}'),
+                        duration: const Duration(seconds: 2),
+                      ),
+                    );
+                  }
+                },
+              );
+            },
+          ),
+        ),
+        actions: [
+          TextButton(
+            onPressed: () => Navigator.pop(context),
+            child: const Text('Cancel'),
+          ),
+        ],
+      ),
     );
   }
 }

@@ -1,14 +1,16 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
+import 'package:cashlens/core/providers/currency_provider.dart';
 
-class LandingPage extends StatefulWidget {
+class LandingPage extends ConsumerStatefulWidget {
   const LandingPage({super.key});
 
   @override
-  State<LandingPage> createState() => _LandingPageState();
+  ConsumerState<LandingPage> createState() => _LandingPageState();
 }
 
-class _LandingPageState extends State<LandingPage>
+class _LandingPageState extends ConsumerState<LandingPage>
     with SingleTickerProviderStateMixin {
   late AnimationController _controller;
   late Animation<double> _fadeAnimation;
@@ -34,6 +36,9 @@ class _LandingPageState extends State<LandingPage>
     );
 
     _controller.forward();
+    
+    // Initialize currency provider
+    ref.read(currencyNotifierProvider);
   }
 
   @override
