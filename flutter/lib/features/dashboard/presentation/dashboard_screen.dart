@@ -781,6 +781,8 @@ class _SettingsDialog extends ConsumerWidget {
   Widget build(BuildContext context, WidgetRef ref) {
     final theme = Theme.of(context);
     final currencyAsync = ref.watch(currencyNotifierProvider);
+    // Capture notifier early
+    final currencyNotifier = ref.read(currencyNotifierProvider.notifier);
 
     return AlertDialog(
       title: const Text('Settings'),
@@ -797,7 +799,7 @@ class _SettingsDialog extends ConsumerWidget {
                 trailing: const Icon(Icons.chevron_right),
                 onTap: () {
                   Navigator.pop(context);
-                  _showCurrencySelector(context, ref, currentCurrency);
+                  _showCurrencySelector(context, currencyNotifier, currentCurrency);
                 },
               ),
               loading: () => const ListTile(
@@ -855,14 +857,11 @@ class _SettingsDialog extends ConsumerWidget {
     );
   }
 
-  void _showCurrencySelector(
+  static void _showCurrencySelector(
     BuildContext context,
-    WidgetRef ref,
+    CurrencyNotifier currencyNotifier,
     Currency currentCurrency,
   ) {
-    // Capture the notifier BEFORE showing the dialog
-    final currencyNotifier = ref.read(currencyNotifierProvider.notifier);
-    
     showDialog(
       context: context,
       builder: (dialogContext) => _CurrencySelector(
@@ -871,7 +870,7 @@ class _SettingsDialog extends ConsumerWidget {
           // Close dialog first
           Navigator.pop(dialogContext);
           
-          // Then update currency using captured notifier
+          // Then update currency using passed notifier
           await currencyNotifier.setCurrency(currency);
           
           // Show confirmation
