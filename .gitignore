@@ -23,43 +23,43 @@
 .env
 
 # Flutter/Dart
-flutter_app/.dart_tool/
-flutter_app/.flutter-plugins
-flutter_app/.flutter-plugins-dependencies
-flutter_app/.packages
-flutter_app/build/
-flutter_app/pubspec.lock
-flutter_app/**/*.g.dart
-flutter_app/**/*.freezed.dart
-flutter_app/.metadata
+flutter/.dart_tool/
+flutter/.flutter-plugins
+flutter/.flutter-plugins-dependencies
+flutter/.packages
+flutter/build/
+flutter/pubspec.lock
+flutter/**/*.g.dart
+flutter/**/*.freezed.dart
+flutter/.metadata
 
 # Android
-flutter_app/android/app/debug
-flutter_app/android/app/profile
-flutter_app/android/app/release
-flutter_app/android/.gradle/
-flutter_app/android/captures/
-flutter_app/android/local.properties
-flutter_app/android/gradlew
-flutter_app/android/gradlew.bat
-flutter_app/android/key.properties
+flutter/android/app/debug
+flutter/android/app/profile
+flutter/android/app/release
+flutter/android/.gradle/
+flutter/android/captures/
+flutter/android/local.properties
+flutter/android/gradlew
+flutter/android/gradlew.bat
+flutter/android/key.properties
 
 # iOS
-flutter_app/ios/Pods/
-flutter_app/ios/.symlinks/
-flutter_app/ios/Flutter/Flutter.framework
-flutter_app/ios/Flutter/Flutter.podspec
-flutter_app/ios/Flutter/Generated.xcconfig
-flutter_app/ios/Flutter/app.flx
-flutter_app/ios/Flutter/app.zip
-flutter_app/ios/Flutter/flutter_assets/
-flutter_app/ios/ServiceDefinitions.json
-flutter_app/ios/Runner/GeneratedPluginRegistrant.*
+flutter/ios/Pods/
+flutter/ios/.symlinks/
+flutter/ios/Flutter/Flutter.framework
+flutter/ios/Flutter/Flutter.podspec
+flutter/ios/Flutter/Generated.xcconfig
+flutter/ios/Flutter/app.flx
+flutter/ios/Flutter/app.zip
+flutter/ios/Flutter/flutter_assets/
+flutter/ios/ServiceDefinitions.json
+flutter/ios/Runner/GeneratedPluginRegistrant.*
 
 # Web
-flutter_app/web/flutter_service_worker.js
-flutter_app/web/manifest.json
-flutter_app/web/version.json
+flutter/web/flutter_service_worker.js
+flutter/web/manifest.json
+flutter/web/version.json
 
 # Coverage
-flutter_app/coverage/
+flutter/coverage/

@@ -6,7 +6,7 @@
 - ✅ Reorganize repository into monorepo structure
 - ✅ Move backend code into `backend/` folder
 - ✅ Update configuration files for new structure
-- ✅ Create `flutter_app/` folder for Flutter UI
+- ✅ Create `flutter/` folder for Flutter UI
 
 ---
 
@@ -65,7 +65,7 @@
 ## Flutter UI Development
 
 ### Project Setup
-- ✅ Initialize Flutter project in `flutter_app/`
+- ✅ Initialize Flutter project in `flutter/`
 - ✅ Setup project structure (features, core, shared)
 - ✅ Configure API client (Dio/http)
 - ✅ Setup state management (Riverpod)

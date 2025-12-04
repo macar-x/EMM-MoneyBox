@@ -8,7 +8,7 @@ A personal finance management tool for recording daily cash flow with both CLI a
 
 This is a monorepo containing:
 - **`backend/`** - Go/Cobra CLI and REST API server
-- **`flutter_app/`** - Flutter cross-platform UI (coming soon)
+- **`flutter/`** - Flutter cross-platform UI
 
 ## Backend
 
