@@ -1,3 +1,4 @@
+import 'package:cashlens/features/auth/presentation/landing_page.dart';
 import 'package:cashlens/features/dashboard/presentation/dashboard_screen.dart';
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
@@ -13,7 +14,12 @@ GoRouter goRouter(GoRouterRef ref) {
     routes: [
       GoRoute(
         path: '/',
-        name: 'home',
+        name: 'landing',
+        builder: (context, state) => const LandingPage(),
+      ),
+      GoRoute(
+        path: '/dashboard',
+        name: 'dashboard',
         builder: (context, state) => const DashboardScreen(),
       ),
       GoRoute(
