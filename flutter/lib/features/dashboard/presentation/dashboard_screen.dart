@@ -860,6 +860,9 @@ class _SettingsDialog extends ConsumerWidget {
     WidgetRef ref,
     Currency currentCurrency,
   ) {
+    // Capture the notifier BEFORE showing the dialog
+    final currencyNotifier = ref.read(currencyNotifierProvider.notifier);
+    
     showDialog(
       context: context,
       builder: (dialogContext) => _CurrencySelector(
@@ -868,10 +871,8 @@ class _SettingsDialog extends ConsumerWidget {
           // Close dialog first
           Navigator.pop(dialogContext);
           
-          // Then update currency
-          await ref
-              .read(currencyNotifierProvider.notifier)
-              .setCurrency(currency);
+          // Then update currency using captured notifier
+          await currencyNotifier.setCurrency(currency);
           
           // Show confirmation
           if (context.mounted) {
