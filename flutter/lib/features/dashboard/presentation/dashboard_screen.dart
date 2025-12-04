@@ -862,70 +862,93 @@ class _SettingsDialog extends ConsumerWidget {
   ) {
     showDialog(
       context: context,
-      builder: (context) => AlertDialog(
-        title: const Text('Select Currency'),
-        content: SizedBox(
-          width: double.maxFinite,
-          child: ListView.builder(
-            shrinkWrap: true,
-            itemCount: SupportedCurrencies.all.length,
-            itemBuilder: (context, index) {
-              final currency = SupportedCurrencies.all[index];
-              final isSelected = currency.code == currentCurrency.code;
-              
-              return ListTile(
-                leading: CircleAvatar(
-                  backgroundColor: isSelected
-                      ? Theme.of(context).colorScheme.primary
-                      : Theme.of(context).colorScheme.surfaceContainerHighest,
-                  child: Text(
-                    currency.symbol,
-                    style: TextStyle(
-                      color: isSelected
-                          ? Theme.of(context).colorScheme.onPrimary
-                          : Theme.of(context).colorScheme.onSurface,
-                      fontWeight: FontWeight.bold,
-                    ),
-                  ),
-                ),
-                title: Text(
-                  currency.name,
-                  style: TextStyle(
-                    fontWeight: isSelected ? FontWeight.bold : FontWeight.normal,
-                  ),
-                ),
-                subtitle: Text('${currency.code} (${currency.symbol})'),
-                trailing: isSelected
-                    ? Icon(
-                        Icons.check_circle,
-                        color: Theme.of(context).colorScheme.primary,
-                      )
-                    : null,
-                onTap: () async {
-                  await ref
-                      .read(currencyNotifierProvider.notifier)
-                      .setCurrency(currency);
-                  if (context.mounted) {
-                    Navigator.pop(context);
-                    ScaffoldMessenger.of(context).showSnackBar(
-                      SnackBar(
-                        content: Text('Currency changed to ${currency.code}'),
-                        duration: const Duration(seconds: 2),
-                      ),
-                    );
-                  }
-                },
-              );
-            },
-          ),
-        ),
-        actions: [
-          TextButton(
-            onPressed: () => Navigator.pop(context),
-            child: const Text('Cancel'),
-          ),
-        ],
+      builder: (dialogContext) => _CurrencySelector(
+        currentCurrency: currentCurrency,
+        onCurrencySelected: (currency) async {
+          // Close dialog first
+          Navigator.pop(dialogContext);
+          
+          // Then update currency
+          await ref
+              .read(currencyNotifierProvider.notifier)
+              .setCurrency(currency);
+          
+          // Show confirmation
+          if (context.mounted) {
+            ScaffoldMessenger.of(context).showSnackBar(
+              SnackBar(
+                content: Text('Currency changed to ${currency.code}'),
+                duration: const Duration(seconds: 2),
+              ),
+            );
+          }
+        },
       ),
+    );
+  }
+}
+
+class _CurrencySelector extends StatelessWidget {
+  final Currency currentCurrency;
+  final Function(Currency) onCurrencySelected;
+
+  const _CurrencySelector({
+    required this.currentCurrency,
+    required this.onCurrencySelected,
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    return AlertDialog(
+      title: const Text('Select Currency'),
+      content: SizedBox(
+        width: double.maxFinite,
+        child: ListView.builder(
+          shrinkWrap: true,
+          itemCount: SupportedCurrencies.all.length,
+          itemBuilder: (context, index) {
+            final currency = SupportedCurrencies.all[index];
+            final isSelected = currency.code == currentCurrency.code;
+            
+            return ListTile(
+              leading: CircleAvatar(
+                backgroundColor: isSelected
+                    ? Theme.of(context).colorScheme.primary
+                    : Theme.of(context).colorScheme.surfaceContainerHighest,
+                child: Text(
+                  currency.symbol,
+                  style: TextStyle(
+                    color: isSelected
+                        ? Theme.of(context).colorScheme.onPrimary
+                        : Theme.of(context).colorScheme.onSurface,
+                    fontWeight: FontWeight.bold,
+                  ),
+                ),
+              ),
+              title: Text(
+                currency.name,
+                style: TextStyle(
+                  fontWeight: isSelected ? FontWeight.bold : FontWeight.normal,
+                ),
+              ),
+              subtitle: Text('${currency.code} (${currency.symbol})'),
+              trailing: isSelected
+                  ? Icon(
+                      Icons.check_circle,
+                      color: Theme.of(context).colorScheme.primary,
+                    )
+                  : null,
+              onTap: () => onCurrencySelected(currency),
+            );
+          },
+        ),
+      ),
+      actions: [
+        TextButton(
+          onPressed: () => Navigator.pop(context),
+          child: const Text('Cancel'),
+        ),
+      ],
     );
   }
 }
