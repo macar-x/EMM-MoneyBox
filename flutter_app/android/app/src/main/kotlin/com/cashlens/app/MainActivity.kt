@@ -1,4 +1,4 @@
-package com.emm.emm_moneybox
+package com.cashlens.app
 
 import io.flutter.embedding.android.FlutterActivity
 

@@ -7,7 +7,7 @@ class DashboardScreen extends StatelessWidget {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: const Text('EMM MoneyBox'),
+        title: const Text('Cashlens'),
         actions: [
           IconButton(
             icon: const Icon(Icons.settings),
@@ -26,12 +26,12 @@ class DashboardScreen extends StatelessWidget {
             ),
             const SizedBox(height: 24),
             Text(
-              'Welcome to EMM MoneyBox',
+              'Welcome to Cashlens',
               style: Theme.of(context).textTheme.headlineMedium,
             ),
             const SizedBox(height: 16),
             Text(
-              'Your personal finance tracker',
+              'See your money clearly',
               style: Theme.of(context).textTheme.bodyLarge?.copyWith(
                     color: Colors.grey,
                   ),

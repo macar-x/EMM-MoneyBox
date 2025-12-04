@@ -1,5 +1,6 @@
 class AppConstants {
-  static const String appName = 'EMM MoneyBox';
+  static const String appName = 'Cashlens';
+  static const String appSlogan = 'See your money clearly';
   static const String appVersion = '1.0.0';
   
   // Date formats

@@ -1,4 +1,6 @@
-# EMM-MoneyBox Development Roadmap
+# Cashlens Development Roadmap
+
+**See your money clearly**
 
 ## Project Structure
 - ✅ Reorganize repository into monorepo structure

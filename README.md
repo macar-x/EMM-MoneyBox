@@ -1,4 +1,6 @@
-# EMM-MoneyBox
+# Cashlens
+
+**See your money clearly**
 
 A personal finance management tool for recording daily cash flow with both CLI and REST API interfaces.
 

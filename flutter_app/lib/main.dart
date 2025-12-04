@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:emm_moneybox/core/routing/app_router.dart';
-import 'package:emm_moneybox/core/theme/app_theme.dart';
-import 'package:emm_moneybox/shared/constants/app_constants.dart';
+import 'package:cashlens/core/routing/app_router.dart';
+import 'package:cashlens/core/theme/app_theme.dart';
+import 'package:cashlens/shared/constants/app_constants.dart';
 
 void main() {
   runApp(

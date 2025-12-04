@@ -1,4 +1,6 @@
-# EMM MoneyBox Flutter App
+# Cashlens Flutter App
+
+**See your money clearly**
 
 Personal finance management app built with Flutter for cross-platform support (Web, Android, iOS).
 
@@ -134,7 +136,7 @@ See [TODO.md](../TODO.md) for the complete feature roadmap.
 
 ## API Integration
 
-The app connects to the EMM-MoneyBox backend API. See [backend README](../backend/README.md) for API documentation.
+The app connects to the Cashlens backend API. See [backend README](../backend/README.md) for API documentation.
 
 ## License
 
