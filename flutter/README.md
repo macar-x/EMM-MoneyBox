@@ -86,12 +86,23 @@ flutter build ios --release
 
 ## Configuration
 
-Set the API base URL via environment variable:
+### Environment Variables
+
+The app uses compile-time environment variables:
+
+**Development:**
 ```bash
-flutter run --dart-define=API_BASE_URL=http://your-api-url:8080
+flutter run -d chrome --dart-define=API_BASE_URL=http://localhost:8080
 ```
 
-Default: `http://localhost:8080`
+**Production:**
+```bash
+flutter build web --release --dart-define=API_BASE_URL=https://api.yourdomain.com
+```
+
+**Default:** `http://localhost:8080`
+
+See [../ENVIRONMENT.md](../ENVIRONMENT.md) for detailed configuration guide.
 
 ## Development
 

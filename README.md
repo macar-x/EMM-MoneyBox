@@ -17,11 +17,29 @@ This is a monorepo containing:
 - MongoDB or MySQL database
 
 ### Configuration
-Database configuration is read from environment variables:
-- `MONGO_DB_URI` - MongoDB connection string
-- `MYSQL_DB_URI` - MySQL connection string
 
-See `backend/util/config_util.go` for details.
+1. Copy the environment template:
+```bash
+cp .env.sample .env
+```
+
+2. Edit `.env` with your database credentials:
+```bash
+# For MongoDB
+DB_TYPE=mongodb
+MONGO_DB_URI=mongodb+srv://username:password@cluster.mongodb.net/cashlens
+
+# For MySQL
+DB_TYPE=mysql
+MYSQL_DB_URI=username:password@tcp(localhost:3306)/cashlens
+```
+
+3. Load environment variables:
+```bash
+export $(cat .env | xargs)
+```
+
+See [ENVIRONMENT.md](ENVIRONMENT.md) for detailed configuration guide.
 
 ### CLI Commands
 

@@ -10,13 +10,31 @@ func init() {
 }
 
 func initDefaultValues() {
-	configurationMap["logger.file"] = "./emm-moneybox.log"
-	configurationMap["db.name"] = "emm_moneybox"
-	// format: mongodb / mysql
-	configurationMap["db.type"] = "mongodb"
-	// format: mongodb+srv://
+	// Logger configuration
+	logFile := os.Getenv("LOG_FILE")
+	if logFile == "" {
+		logFile = "./cashlens.log"
+	}
+	configurationMap["logger.file"] = logFile
+
+	// Database name
+	dbName := os.Getenv("DB_NAME")
+	if dbName == "" {
+		dbName = "cashlens"
+	}
+	configurationMap["db.name"] = dbName
+
+	// Database type: mongodb / mysql
+	dbType := os.Getenv("DB_TYPE")
+	if dbType == "" {
+		dbType = "mongodb"
+	}
+	configurationMap["db.type"] = dbType
+
+	// MongoDB URI format: mongodb+srv://username:password@host/database
 	configurationMap["db.mongodb.url"] = os.Getenv("MONGO_DB_URI")
-	// format: user:password@tcp(host:port)
+
+	// MySQL URI format: username:password@tcp(host:port)/database
 	configurationMap["db.mysql.url"] = os.Getenv("MYSQL_DB_URI")
 }
 
