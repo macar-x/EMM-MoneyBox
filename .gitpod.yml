@@ -5,7 +5,8 @@
 # Learn more from ready-to-use templates: https://www.gitpod.io/docs/introduction/getting-started/quickstart
 
 tasks:
-  - init: go get && go build ./... && go test ./...
-    command: go run .
+  - name: Backend
+    init: cd backend && go get && go build ./... && go test ./...
+    command: cd backend && go run .
 
 
