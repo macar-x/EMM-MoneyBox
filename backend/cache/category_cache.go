@@ -43,9 +43,11 @@ func (c *CategoryCache) GetByName(name string) (*model.CategoryEntity, bool) {
 	}
 
 	c.mu.RLock()
-	defer c.mu.RUnlock()
-
 	entity, ok := c.byName[name]
+	c.mu.RUnlock()
+
+	// Update stats outside of read lock to avoid race
+	c.mu.Lock()
 	if ok {
 		c.hits++
 		util.Logger.Debugw("Category cache hit", "name", name)
@@ -53,6 +55,8 @@ func (c *CategoryCache) GetByName(name string) (*model.CategoryEntity, bool) {
 		c.misses++
 		util.Logger.Debugw("Category cache miss", "name", name)
 	}
+	c.mu.Unlock()
+
 	return entity, ok
 }
 
@@ -63,14 +67,18 @@ func (c *CategoryCache) GetByID(id string) (*model.CategoryEntity, bool) {
 	}
 
 	c.mu.RLock()
-	defer c.mu.RUnlock()
-
 	entity, ok := c.byID[id]
+	c.mu.RUnlock()
+
+	// Update stats outside of read lock to avoid race
+	c.mu.Lock()
 	if ok {
 		c.hits++
 	} else {
 		c.misses++
 	}
+	c.mu.Unlock()
+
 	return entity, ok
 }
 
