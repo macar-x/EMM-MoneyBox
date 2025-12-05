@@ -5,7 +5,7 @@ import (
 	"strconv"
 	"time"
 
-	"github.com/emmettwoo/EMM-MoneyBox/util"
+	"github.com/macar-x/cashlens/util"
 
 	"go.mongodb.org/mongo-driver/bson/primitive"
 )

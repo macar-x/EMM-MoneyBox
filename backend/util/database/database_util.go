@@ -1,7 +1,7 @@
 package database
 
 import (
-	"github.com/emmettwoo/EMM-MoneyBox/util"
+	"github.com/macar-x/cashlens/util"
 	"log"
 	"sync"
 )

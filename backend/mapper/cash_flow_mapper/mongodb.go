@@ -1,11 +1,12 @@
 package cash_flow_mapper
 
 import (
+	"context"
 	"time"
 
-	"github.com/emmettwoo/EMM-MoneyBox/model"
-	"github.com/emmettwoo/EMM-MoneyBox/util"
-	"github.com/emmettwoo/EMM-MoneyBox/util/database"
+	"github.com/macar-x/cashlens/model"
+	"github.com/macar-x/cashlens/util"
+	"github.com/macar-x/cashlens/util/database"
 	"go.mongodb.org/mongo-driver/bson"
 	"go.mongodb.org/mongo-driver/bson/primitive"
 )
@@ -65,6 +66,26 @@ func (CashFlowMongoDbMapper) GetCashFlowsByBelongsDate(belongsDate time.Time) []
 	defer database.CloseMongoDbConnection()
 
 	// 获取查询结果并转入结构对象
+	var targetEntityList []model.CashFlowEntity
+	queryResultList := database.GetManyInMongoDB(filter)
+	for _, queryResult := range queryResultList {
+		targetEntityList = append(targetEntityList, convertBsonM2CashFlowEntity(queryResult))
+	}
+	return targetEntityList
+}
+
+func (CashFlowMongoDbMapper) GetCashFlowsByDateRange(from, to time.Time) []model.CashFlowEntity {
+
+	filter := bson.D{
+		primitive.E{Key: "belongs_date", Value: bson.M{
+			"$gte": from,
+			"$lte": to,
+		}},
+	}
+
+	database.OpenMongoDbConnection(database.CashFlowTableName)
+	defer database.CloseMongoDbConnection()
+
 	var targetEntityList []model.CashFlowEntity
 	queryResultList := database.GetManyInMongoDB(filter)
 	for _, queryResult := range queryResultList {
@@ -168,6 +189,36 @@ func (CashFlowMongoDbMapper) InsertCashFlowByEntity(newEntity model.CashFlowEnti
 
 	newCashFlowId := database.InsertOneInMongoDB(convertCashFlowEntity2BsonD(newEntity))
 	return newCashFlowId.Hex()
+}
+
+func (CashFlowMongoDbMapper) BulkInsertCashFlows(entities []model.CashFlowEntity) ([]string, error) {
+	if len(entities) == 0 {
+		return []string{}, nil
+	}
+
+	var operatingTime = time.Now()
+	documents := make([]interface{}, len(entities))
+	
+	for i, entity := range entities {
+		entity.CreateTime = operatingTime
+		entity.ModifyTime = operatingTime
+		documents[i] = convertCashFlowEntity2BsonD(entity)
+	}
+
+	collection := database.GetMongoCollection(database.CashFlowTableName)
+	result, err := collection.InsertMany(context.TODO(), documents)
+	if err != nil {
+		util.Logger.Errorw("bulk insert failed", "error", err)
+		return nil, err
+	}
+
+	ids := make([]string, len(result.InsertedIDs))
+	for i, id := range result.InsertedIDs {
+		ids[i] = id.(primitive.ObjectID).Hex()
+	}
+
+	util.Logger.Infow("bulk insert successful", "count", len(ids))
+	return ids, nil
 }
 
 func (CashFlowMongoDbMapper) UpdateCashFlowByEntity(plainId string) model.CashFlowEntity {

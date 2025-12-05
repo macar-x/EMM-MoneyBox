@@ -4,54 +4,98 @@ import (
 	"context"
 	"errors"
 	"log"
-	"reflect"
+	"time"
 
-	"github.com/emmettwoo/EMM-MoneyBox/util"
+	"github.com/macar-x/cashlens/util"
 	"go.mongodb.org/mongo-driver/bson"
 	"go.mongodb.org/mongo-driver/bson/primitive"
 	"go.mongodb.org/mongo-driver/mongo"
 	"go.mongodb.org/mongo-driver/mongo/options"
 )
 
-var client *mongo.Client
+var mongoClient *mongo.Client
+var mongoDatabase *mongo.Database
 var collection *mongo.Collection
 
-func OpenMongoDbConnection(collectionName string) {
-
-	// check and init database setting
+// InitMongoDbConnection initializes the MongoDB connection pool (called once at startup)
+func InitMongoDbConnection() error {
 	once.Do(initMongoDbConnection)
 	if defaultDatabaseUri == "" {
-		log.Fatal("environment value 'MONGO_DB_URI' not set")
+		return errors.New("environment value 'MONGO_DB_URI' not set")
 	}
 
-	// 定義數據庫連綫
+	if mongoClient != nil {
+		return nil // Already initialized
+	}
+
+	ctx, cancel := context.WithTimeout(context.Background(), 10*time.Second)
+	defer cancel()
+
+	clientOptions := options.Client().
+		ApplyURI(defaultDatabaseUri).
+		SetMaxPoolSize(50).
+		SetMinPoolSize(10).
+		SetMaxConnIdleTime(5 * time.Minute)
+
 	var err error
-	client, err = mongo.Connect(context.TODO(),
-		options.Client().ApplyURI(defaultDatabaseUri).SetMaxPoolSize(50))
+	mongoClient, err = mongo.Connect(ctx, clientOptions)
 	if err != nil {
-		log.Fatal(err)
+		return err
 	}
 
-	// 設定數據集合
-	collection = client.Database(defaultDatabaseName).Collection(collectionName)
+	// Ping to verify connection
+	if err = mongoClient.Ping(ctx, nil); err != nil {
+		return err
+	}
+
+	mongoDatabase = mongoClient.Database(defaultDatabaseName)
 	isConnected = true
-	util.Logger.Debugln("database connection created")
+	util.Logger.Info("MongoDB connection pool initialized")
+	return nil
 }
 
-// CloseMongoDbConnection fixme: take action after CRUD, ensure every action have open a new connection.
-func CloseMongoDbConnection() {
+// GetMongoCollection returns a collection from the connection pool
+func GetMongoCollection(collectionName string) *mongo.Collection {
+	if mongoClient == nil || mongoDatabase == nil {
+		if err := InitMongoDbConnection(); err != nil {
+			log.Fatal("Failed to initialize MongoDB connection:", err)
+		}
+	}
+	return mongoDatabase.Collection(collectionName)
+}
 
-	// do nothing if not connected
-	if !isConnected || reflect.DeepEqual(client, mongo.Client{}) {
-		isConnected = false
+// OpenMongoDbConnection sets the current collection (for backward compatibility)
+// Deprecated: Use GetMongoCollection instead
+func OpenMongoDbConnection(collectionName string) {
+	collection = GetMongoCollection(collectionName)
+	util.Logger.Debug("Using MongoDB collection: ", collectionName)
+}
+
+// CloseMongoDbConnection is now a no-op for backward compatibility
+// The connection pool stays open for the lifetime of the application
+// Use ShutdownMongoDbConnection() for actual shutdown
+func CloseMongoDbConnection() {
+	// No-op: connection pool remains open
+}
+
+// ShutdownMongoDbConnection closes the MongoDB connection pool (called only on application shutdown)
+func ShutdownMongoDbConnection() {
+	if mongoClient == nil {
 		return
 	}
-	// close the connection
-	if err := client.Disconnect(context.TODO()); err != nil {
-		panic(err)
+
+	ctx, cancel := context.WithTimeout(context.Background(), 10*time.Second)
+	defer cancel()
+
+	if err := mongoClient.Disconnect(ctx); err != nil {
+		util.Logger.Errorw("Failed to close MongoDB connection", "error", err)
+		return
 	}
+
+	mongoClient = nil
+	mongoDatabase = nil
 	isConnected = false
-	util.Logger.Debugln("database connection closed")
+	util.Logger.Info("MongoDB connection pool closed")
 }
 
 func GetOneInMongoDB(filter bson.D) bson.M {
@@ -147,4 +191,10 @@ func DeleteManyInMongoDB(filter bson.D) int64 {
 	}
 
 	return result.DeletedCount
+}
+
+// GetMongoDbCollection returns the current MongoDB collection for advanced operations
+func GetMongoDbCollection() *mongo.Collection {
+	checkDbConnection()
+	return collection
 }

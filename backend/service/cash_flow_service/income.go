@@ -4,15 +4,36 @@ import (
 	"errors"
 	"time"
 
-	"github.com/emmettwoo/EMM-MoneyBox/mapper/cash_flow_mapper"
-	"github.com/emmettwoo/EMM-MoneyBox/mapper/category_mapper"
-	"github.com/emmettwoo/EMM-MoneyBox/model"
-	"github.com/emmettwoo/EMM-MoneyBox/util"
+	"github.com/macar-x/cashlens/mapper/cash_flow_mapper"
+	"github.com/macar-x/cashlens/mapper/category_mapper"
+	"github.com/macar-x/cashlens/model"
+	"github.com/macar-x/cashlens/util"
+	"github.com/macar-x/cashlens/validation"
 	"github.com/shopspring/decimal"
 )
 
-// todo: merge income & outcome into one service.
+// SaveIncome creates a new income cash flow record
+// Note: Could be merged with SaveOutcome into a single SaveCashFlow(flowType, ...) function
 func SaveIncome(belongsDate, categoryName string, amount float64, description string) (model.CashFlowEntity, error) {
+
+	// Validate inputs
+	if err := validation.ValidateCategoryName(categoryName); err != nil {
+		return model.CashFlowEntity{}, err
+	}
+
+	if err := validation.ValidateAmount(amount); err != nil {
+		return model.CashFlowEntity{}, err
+	}
+
+	if belongsDate != "" {
+		if err := validation.ValidateDate(belongsDate); err != nil {
+			return model.CashFlowEntity{}, err
+		}
+	}
+
+	if err := validation.ValidateDescription(description); err != nil {
+		return model.CashFlowEntity{}, err
+	}
 
 	// 取小數點後兩位
 	amount, _ = decimal.NewFromFloat(amount).Round(2).Float64()

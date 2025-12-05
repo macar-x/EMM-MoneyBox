@@ -5,9 +5,9 @@ import (
 	"reflect"
 	"time"
 
-	"github.com/emmettwoo/EMM-MoneyBox/mapper/cash_flow_mapper"
-	"github.com/emmettwoo/EMM-MoneyBox/model"
-	"github.com/emmettwoo/EMM-MoneyBox/util"
+	"github.com/macar-x/cashlens/mapper/cash_flow_mapper"
+	"github.com/macar-x/cashlens/model"
+	"github.com/macar-x/cashlens/util"
 )
 
 func IsQueryFieldsConflicted(plainId, belongsDate, exactDescription, fuzzyDescription string) bool {
@@ -65,7 +65,6 @@ func QueryByDate(belongsDate string) ([]model.CashFlowEntity, error) {
 	}
 
 	matchedCashFlowList := cash_flow_mapper.INSTANCE.GetCashFlowsByBelongsDate(queryDate)
-	// todo(emmett): when query result no match, consider return empty array rather than a nil interface.
 	return matchedCashFlowList, nil
 }
 

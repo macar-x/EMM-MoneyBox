@@ -12,12 +12,16 @@ var categoryName string
 
 var CategoryCmd = &cobra.Command{
 	Use:   "category",
-	Short: "operating category data",
-	Long: `
-Operating category data by several sub-commands.
-Provide sub-commands: [query, create, delete].`,
+	Short: "manage transaction categories",
+	Long: `Manage transaction categories for organizing cash flows.
 
-	// todo(emmett): add sub-command: update by id
+Available sub-commands:
+  create - Create new category
+  update - Update existing category
+  delete - Delete category
+  query  - Query categories by filters
+  list   - List all categories`,
+
 	RunE: func(cmd *cobra.Command, args []string) error {
 		return errors.New("must provide a valid sub command")
 	},

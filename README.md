@@ -1,4 +1,6 @@
-# EMM-MoneyBox
+# Cashlens
+
+**See your money clearly**
 
 A personal finance management tool for recording daily cash flow with both CLI and REST API interfaces.
 
@@ -6,7 +8,7 @@ A personal finance management tool for recording daily cash flow with both CLI a
 
 This is a monorepo containing:
 - **`backend/`** - Go/Cobra CLI and REST API server
-- **`flutter_app/`** - Flutter cross-platform UI (coming soon)
+- **`flutter/`** - Flutter cross-platform UI
 
 ## Backend
 
@@ -15,11 +17,29 @@ This is a monorepo containing:
 - MongoDB or MySQL database
 
 ### Configuration
-Database configuration is read from environment variables:
-- `MONGO_DB_URI` - MongoDB connection string
-- `MYSQL_DB_URI` - MySQL connection string
 
-See `backend/util/config_util.go` for details.
+1. Copy the environment template:
+```bash
+cp .env.sample .env
+```
+
+2. Edit `.env` with your database credentials:
+```bash
+# For MongoDB
+DB_TYPE=mongodb
+MONGO_DB_URI=mongodb+srv://username:password@cluster.mongodb.net/cashlens
+
+# For MySQL
+DB_TYPE=mysql
+MYSQL_DB_URI=username:password@tcp(localhost:3306)/cashlens
+```
+
+3. Load environment variables:
+```bash
+export $(cat .env | xargs)
+```
+
+See [docs/ENVIRONMENT.md](docs/ENVIRONMENT.md) for detailed configuration guide.
 
 ### CLI Commands
 
@@ -68,7 +88,7 @@ go run main.go server start -p 8080
 - `DELETE /api/cash/{id}` - Delete by ID
 - `DELETE /api/cash/date/{date}` - Delete by date
 
-See [TODO.md](TODO.md) for planned API endpoints.
+See [backend/docs/API.md](backend/docs/API.md) for complete API reference.
 
 ### Docker
 
@@ -78,6 +98,8 @@ cd backend
 docker-compose up --build
 ```
 
+See [docs/DOCKER.md](docs/DOCKER.md) for detailed Docker setup.
+
 ## Flutter UI (Coming Soon)
 
 A cross-platform UI built with Flutter supporting:
@@ -85,11 +107,11 @@ A cross-platform UI built with Flutter supporting:
 - Android
 - iOS
 
-See [TODO.md](TODO.md) for the complete development roadmap.
+See [flutter/docs/SETUP.md](flutter/docs/SETUP.md) for platform setup.
 
 ## Development Roadmap
 
-Check [TODO.md](TODO.md) for:
+Check [docs/TODO.md](docs/TODO.md) for:
 - Planned backend API endpoints
 - Flutter UI features
 - Future enhancements

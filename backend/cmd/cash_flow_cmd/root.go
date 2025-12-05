@@ -15,12 +15,19 @@ var descriptionFuzzy string
 
 var CashCmd = &cobra.Command{
 	Use:   "cash",
-	Short: "operating cash_flow data",
-	Long: `
-Operating cash data by several sub-commands.
-Provide sub-commands: [query, delete, outcome].`,
+	Short: "manage cash flow transactions",
+	Long: `Manage cash flow transactions (income and expenses).
 
-	// todo(emmett): add sub-command: update by id
+Available sub-commands:
+  income   - Add new income transaction
+  outcome  - Add new expense transaction
+  update   - Update existing transaction
+  delete   - Delete transaction(s)
+  query    - Query transactions by filters
+  list     - List all transactions with pagination
+  range    - Query transactions by date range
+  summary  - Show financial summary`,
+
 	RunE: func(cmd *cobra.Command, args []string) error {
 		return errors.New("must provide a valid sub command")
 	},

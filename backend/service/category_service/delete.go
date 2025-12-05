@@ -4,8 +4,9 @@ import (
 	"errors"
 	"fmt"
 
-	"github.com/emmettwoo/EMM-MoneyBox/mapper/cash_flow_mapper"
-	"github.com/emmettwoo/EMM-MoneyBox/mapper/category_mapper"
+	"github.com/macar-x/cashlens/mapper/cash_flow_mapper"
+	"github.com/macar-x/cashlens/mapper/category_mapper"
+	"github.com/macar-x/cashlens/validation"
 )
 
 func DeleteService(plainId, categoryName string) error {
@@ -49,6 +50,11 @@ func isDeleteFieldsConflicted(plainId, categoryName string) bool {
 
 func deleteById(plainId string) error {
 
+	// Validate ID
+	if err := validation.ValidateID(plainId); err != nil {
+		return err
+	}
+
 	var existCategoryEntity = category_mapper.INSTANCE.GetCategoryByObjectId(plainId)
 	if existCategoryEntity.IsEmpty() {
 		fmt.Println("category not found")
@@ -68,6 +74,11 @@ func deleteById(plainId string) error {
 }
 
 func deleteByName(categoryName string) error {
+
+	// Validate category name
+	if err := validation.ValidateCategoryName(categoryName); err != nil {
+		return err
+	}
 
 	var existCategoryEntity = category_mapper.INSTANCE.GetCategoryByName(categoryName)
 	if existCategoryEntity.IsEmpty() {

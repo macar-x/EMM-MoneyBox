@@ -1,7 +1,7 @@
 package manage_cmd
 
 import (
-	"github.com/emmettwoo/EMM-MoneyBox/service/manage_service"
+	"github.com/macar-x/cashlens/service/manage_service"
 	"github.com/spf13/cobra"
 )
 

@@ -1,14 +1,131 @@
-# EMM-MoneyBox Development Roadmap
+# Cashlens Development Roadmap
+
+**See your money clearly**
+
+---
+
+## 🎉 Recent Completion (December 5, 2024)
+
+### ✅ Backend Refactoring Complete (Phase 1, 2, 3)
+- ✅ **Performance**: 825x faster (date range queries, connection pooling, caching)
+- ✅ **Quality**: 100% service validation, 87%+ test coverage
+- ✅ **Architecture**: Graceful shutdown, batch operations
+- ✅ **Database**: MySQL & MongoDB parity verified
+
+**See**: `docs/REFACTORING_ROADMAP.md` for details
+
+---
+
+## Priority Legend
+
+- **[HIGH]** - Critical for production, should be done soon
+- **[MEDIUM]** - Important but not blocking, can be done incrementally
+- **[LOW]** - Nice to have, can be deferred based on needs
+- **No tag** - Standard priority, do when relevant
+
+---
 
 ## Project Structure
 - ✅ Reorganize repository into monorepo structure
 - ✅ Move backend code into `backend/` folder
 - ✅ Update configuration files for new structure
-- [ ] Create `flutter_app/` folder for Flutter UI
+- ✅ Create `flutter/` folder for Flutter UI
 
 ---
 
-## Backend API Development
+## Backend Development
+
+### CLI Infrastructure (Completed ✅)
+- ✅ Rebrand from EMM-MoneyBox to Cashlens
+- ✅ Version command
+- ✅ Cash flow commands (income, outcome, query, delete, update, list, range, summary)
+- ✅ Category commands (create, query, delete, update, list)
+- ✅ Data management commands (export, import, backup, restore, init, reset, stats)
+- ✅ Database commands (connect, seed)
+- ✅ Improved help text and command structure
+- ✅ CLI documentation (backend/docs/CLI.md)
+
+**Note**: Most new commands have CLI structure in place but need database service implementation.
+
+### Mapper Layer Enhancements (High Priority)
+
+**Update Methods** - Accept entity parameter instead of just ID:
+- [ ] Enhance `CashFlowMapper.UpdateCashFlowByEntity(plainId, entity)` in MongoDB mapper
+- [ ] Enhance `CashFlowMapper.UpdateCashFlowByEntity(plainId, entity)` in MySQL mapper
+- [ ] Enhance `CategoryMapper.UpdateCategoryByEntity(plainId, entity)` in MongoDB mapper
+- [ ] Enhance `CategoryMapper.UpdateCategoryByEntity(plainId, entity)` in MySQL mapper
+
+**List/Query Methods** - Add pagination support:
+- [ ] Add `CashFlowMapper.GetAllCashFlows(flowType, limit, offset)` to interface
+- [ ] Implement GetAllCashFlows in MongoDB mapper
+- [ ] Implement GetAllCashFlows in MySQL mapper
+- [ ] Add `CategoryMapper.GetAllCategories()` to interface
+- [ ] Implement GetAllCategories in MongoDB mapper
+- [ ] Implement GetAllCategories in MySQL mapper
+
+**Bulk Operations** - For backup/restore/reset:
+- [ ] Add `CashFlowMapper.DeleteAllCashFlows()` to interface
+- [ ] Add `CategoryMapper.DeleteAllCategories()` to interface
+- ✅ Add `CashFlowMapper.BulkInsertCashFlows(entities)` for import performance
+- ✅ Implement bulk operations in both MongoDB and MySQL mappers
+
+**Aggregation Methods** - For statistics:
+- [ ] Add `CashFlowMapper.CountCashFlowsByType(flowType)` to interface
+- [ ] Add `CashFlowMapper.GetEarliestCashFlowDate()` to interface
+- [ ] Add `CashFlowMapper.GetLatestCashFlowDate()` to interface
+- [ ] Add `CategoryMapper.CountAllCategories()` to interface
+- [ ] Implement aggregation methods in both mappers
+
+**Security & Performance**:
+- [ ] Fix SQL injection vulnerability in MySQL mapper (use parameterized queries)
+- [ ] Add transaction support for rollback on errors
+- [ ] Consider Redis caching for category lookups
+- [ ] Add database indexes for performance
+
+### Architecture Refactoring (Medium Priority)
+
+**Code Quality & Maintainability**:
+- ✅ Add constants for magic strings (FlowType, DateFormat, TableNames)
+- ✅ Add validation layer before service calls (100% coverage)
+- ✅ Implement error wrapping with context (standardized error types)
+- [ ] **[LOW]** Add structured logging standards across all layers
+- ✅ Create common response/error types
+- [ ] **[LOW]** Add metrics/monitoring hooks
+
+**Performance Optimizations**:
+- ✅ Optimize date range queries (single query instead of N queries per day)
+- ✅ Implement connection pooling for database
+- ✅ Add batch operations for bulk inserts
+- ✅ Implement category caching (in-memory, thread-safe)
+- ✅ Add database indexes:
+  - ✅ `cash_flow.belongs_date` (for date queries)
+  - ✅ `cash_flow.flow_type` (for type filtering)
+  - ✅ `category.name` (for name lookups)
+  - ✅ Compound index `cash_flow(belongs_date, flow_type)`
+- [ ] **[MEDIUM]** Optimize summary calculations (database aggregation instead of in-memory)
+
+**Modern Patterns**:
+- [ ] **[LOW]** Implement dependency injection pattern
+- [ ] **[MEDIUM]** Add context propagation for cancellation/timeout
+- ✅ Implement graceful shutdown for server
+- [ ] **[LOW]** Add retry logic with exponential backoff
+- [ ] **[LOW]** Implement circuit breaker for database calls
+- [ ] **[LOW]** Add request tracing/correlation IDs
+
+**Testing Infrastructure**:
+- ✅ Add unit tests for validation, errors, cache (87%+ coverage)
+- [ ] **[MEDIUM]** Add integration tests for mappers
+- [ ] **[MEDIUM]** Add end-to-end CLI tests
+- [ ] **[LOW]** Add benchmark tests for performance
+- [ ] **[MEDIUM]** Set up CI/CD pipeline
+- ✅ Add test coverage reporting (achieved: 87%+)
+
+**Database Layer**:
+- [ ] Standardize collection names (singular vs plural)
+- [ ] Add migration system for schema changes
+- [ ] Implement database health checks
+- [ ] Add query timeout configuration
+- [ ] Implement read replicas support (future)
 
 ### Cash Flow API (In Progress)
 - ✅ POST `/api/cash/outcome` - Create expense
@@ -63,19 +180,26 @@
 ## Flutter UI Development
 
 ### Project Setup
-- [ ] Initialize Flutter project in `flutter_app/`
-- [ ] Setup project structure (features, core, shared)
-- [ ] Configure API client (Dio/http)
-- [ ] Setup state management (Riverpod/Bloc)
-- [ ] Configure routing (go_router)
-- [ ] Setup theme (Material 3, dark mode)
+- ✅ Initialize Flutter project in `flutter/`
+- ✅ Setup project structure (features, core, shared)
+- ✅ Configure API client (Dio/http)
+- ✅ Setup state management (Riverpod)
+- ✅ Configure routing (go_router)
+- ✅ Setup theme (Material 3, dark mode)
+- ✅ Landing page with welcome screen
+- ✅ Dashboard with demo data and statistics
+- ✅ Currency settings with localStorage
+- ✅ Drawer navigation menu
+- ✅ Settings dialog with logout
+- ✅ Platform configurations (Android, iOS, Windows, Linux, macOS, Web)
 
 ### Core Features
 
 #### 1. Dashboard/Home Screen
-- [ ] Display current month summary (income, expense, balance)
-- [ ] Show recent transactions list
-- [ ] Quick action buttons (add income/expense)
+- ✅ Display current month summary (income, expense, balance)
+- ✅ Show recent transactions list
+- ✅ Quick action buttons (add income/expense)
+- ✅ Category breakdown (top 5 spending)
 - [ ] Category breakdown chart (pie/donut)
 - [ ] Spending trend chart (line/bar)
 
@@ -122,9 +246,10 @@
 - [ ] Database selection (MongoDB/MySQL)
 - [ ] Connection settings
 - [ ] Theme toggle (light/dark)
-- [ ] Currency selection
+- ✅ Currency selection (15 currencies with localStorage)
 - [ ] Date format preference
-- [ ] About screen
+- ✅ About screen
+- ✅ Logout functionality
 
 #### 6. Data Management
 - [ ] Import from Excel

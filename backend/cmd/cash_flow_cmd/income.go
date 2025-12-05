@@ -4,7 +4,7 @@ import (
 	"errors"
 	"fmt"
 
-	"github.com/emmettwoo/EMM-MoneyBox/service/cash_flow_service"
+	"github.com/macar-x/cashlens/service/cash_flow_service"
 	"github.com/spf13/cobra"
 )
 

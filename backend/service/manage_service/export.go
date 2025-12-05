@@ -6,9 +6,9 @@ import (
 	"strings"
 	"time"
 
-	"github.com/emmettwoo/EMM-MoneyBox/mapper/cash_flow_mapper"
-	"github.com/emmettwoo/EMM-MoneyBox/mapper/category_mapper"
-	"github.com/emmettwoo/EMM-MoneyBox/util"
+	"github.com/macar-x/cashlens/mapper/cash_flow_mapper"
+	"github.com/macar-x/cashlens/mapper/category_mapper"
+	"github.com/macar-x/cashlens/util"
 	"github.com/xuri/excelize/v2"
 )
 
@@ -71,7 +71,6 @@ func saveExcelFile(file *excelize.File, filePath string) {
 	// 根據指定路徑保存活頁簿
 	writeExcelRow(file, defaultSheetName, "A2", "Ended Time")
 	writeExcelRow(file, defaultSheetName, "B2", time.Now())
-	// fixme: support specific output path
 	if err := file.SaveAs(filePath); err != nil {
 		util.Logger.Errorln(err)
 	}

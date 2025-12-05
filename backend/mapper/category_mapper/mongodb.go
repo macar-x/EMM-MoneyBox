@@ -3,9 +3,10 @@ package category_mapper
 import (
 	"time"
 
-	"github.com/emmettwoo/EMM-MoneyBox/model"
-	"github.com/emmettwoo/EMM-MoneyBox/util"
-	"github.com/emmettwoo/EMM-MoneyBox/util/database"
+	"github.com/macar-x/cashlens/cache"
+	"github.com/macar-x/cashlens/model"
+	"github.com/macar-x/cashlens/util"
+	"github.com/macar-x/cashlens/util/database"
 	"go.mongodb.org/mongo-driver/bson"
 	"go.mongodb.org/mongo-driver/bson/primitive"
 )
@@ -31,13 +32,27 @@ func (CategoryMongoDbMapper) GetCategoryByObjectId(plainId string) model.Categor
 
 func (CategoryMongoDbMapper) GetCategoryByName(categoryName string) model.CategoryEntity {
 
+	// Check cache first
+	categoryCache := cache.GetCategoryCache()
+	if cached, ok := categoryCache.GetByName(categoryName); ok {
+		return *cached
+	}
+
+	// Cache miss - query database
 	filter := bson.D{
 		primitive.E{Key: "name", Value: categoryName},
 	}
 
 	database.OpenMongoDbConnection(database.CategoryTableName)
 	defer database.CloseMongoDbConnection()
-	return convertBsonM2CategoryEntity(database.GetOneInMongoDB(filter))
+	entity := convertBsonM2CategoryEntity(database.GetOneInMongoDB(filter))
+
+	// Store in cache if found
+	if !entity.IsEmpty() {
+		categoryCache.Set(&entity)
+	}
+
+	return entity
 }
 
 func (CategoryMongoDbMapper) GetCategoryByParentId(parentPlainId string) []model.CategoryEntity {
@@ -68,6 +83,10 @@ func (CategoryMongoDbMapper) InsertCategoryByEntity(newEntity model.CategoryEnti
 	defer database.CloseMongoDbConnection()
 
 	var newCategoryId = database.InsertOneInMongoDB(convertCategoryEntity2BsonD(newEntity))
+	
+	// Invalidate cache on insert
+	cache.GetCategoryCache().Clear()
+	
 	return newCategoryId.Hex()
 }
 
@@ -101,6 +120,9 @@ func (CategoryMongoDbMapper) UpdateCategoryByEntity(plainId string) model.Catego
 		util.Logger.Errorw("update failed", "rows_affected", rowsAffected)
 		return model.CategoryEntity{}
 	}
+
+	// Invalidate cache on update
+	cache.GetCategoryCache().Clear()
 
 	return model.CategoryEntity{}
 }
@@ -138,6 +160,10 @@ func (CategoryMongoDbMapper) DeleteCategoryByObjectId(plainId string) model.Cate
 		util.Logger.Errorw("delete failed", "rows_affected", rowsAffected)
 		return model.CategoryEntity{}
 	}
+	
+	// Invalidate cache on delete
+	cache.GetCategoryCache().Clear()
+	
 	return targetEntity
 }
 

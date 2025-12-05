@@ -5,9 +5,9 @@ import (
 	"database/sql"
 	"time"
 
-	"github.com/emmettwoo/EMM-MoneyBox/model"
-	"github.com/emmettwoo/EMM-MoneyBox/util"
-	"github.com/emmettwoo/EMM-MoneyBox/util/database"
+	"github.com/macar-x/cashlens/model"
+	"github.com/macar-x/cashlens/util"
+	"github.com/macar-x/cashlens/util/database"
 	"go.mongodb.org/mongo-driver/bson/primitive"
 )
 
@@ -71,6 +71,30 @@ func (CashFlowMySqlMapper) GetCashFlowsByBelongsDate(belongsDate time.Time) []mo
 	defer database.CloseMySqlConnection()
 
 	rows, err := connection.Query(sqlString.String(), util.FormatDateToStringWithDash(belongsDate))
+	if err != nil {
+		util.Logger.Errorw("query failed", "error", err)
+	}
+
+	var targetEntityList []model.CashFlowEntity
+	for rows.Next() {
+		targetEntityList = append(targetEntityList, convertRow2CashFlowEntity(rows))
+	}
+	return targetEntityList
+}
+
+func (CashFlowMySqlMapper) GetCashFlowsByDateRange(from, to time.Time) []model.CashFlowEntity {
+
+	var sqlString bytes.Buffer
+	sqlString.WriteString("SELECT ID, CATEGORY_ID, BELONGS_DATE, FLOW_TYPE, AMOUNT, DESCRIPTION FROM ")
+	sqlString.WriteString(database.CashFlowTableName)
+	sqlString.WriteString(" WHERE BELONGS_DATE BETWEEN ? AND ? ")
+
+	connection := database.GetMySqlConnection()
+	defer database.CloseMySqlConnection()
+
+	rows, err := connection.Query(sqlString.String(), 
+		util.FormatDateToStringWithDash(from), 
+		util.FormatDateToStringWithDash(to))
 	if err != nil {
 		util.Logger.Errorw("query failed", "error", err)
 	}
@@ -212,6 +236,55 @@ func (CashFlowMySqlMapper) InsertCashFlowByEntity(newEntity model.CashFlowEntity
 		util.Logger.Errorw("insert failed", "error", err, "rows_affected", rowsAffected)
 	}
 	return newPlainId
+}
+
+func (CashFlowMySqlMapper) BulkInsertCashFlows(entities []model.CashFlowEntity) ([]string, error) {
+	if len(entities) == 0 {
+		return []string{}, nil
+	}
+
+	var operatingTime = time.Now()
+	var sqlString bytes.Buffer
+	sqlString.WriteString("INSERT INTO ")
+	sqlString.WriteString(database.CashFlowTableName)
+	sqlString.WriteString(" (ID, CATEGORY_ID, BELONGS_DATE, FLOW_TYPE, AMOUNT, DESCRIPTION, REMARK, CREATE_TIME, MODIFY_TIME) VALUES ")
+
+	ids := make([]string, len(entities))
+	values := make([]interface{}, 0, len(entities)*9)
+
+	for i, entity := range entities {
+		if i > 0 {
+			sqlString.WriteString(", ")
+		}
+		sqlString.WriteString("(?, ?, ?, ?, ?, ?, ?, ?, ?)")
+		
+		ids[i] = primitive.NewObjectID().Hex()
+		values = append(values, ids[i], entity.CategoryId.Hex(), entity.BelongsDate, entity.FlowType,
+			entity.Amount, entity.Description, entity.Remark, operatingTime, operatingTime)
+	}
+
+	connection := database.GetMySqlConnection()
+	defer database.CloseMySqlConnection()
+
+	statement, err := connection.Prepare(sqlString.String())
+	if err != nil {
+		util.Logger.Errorw("bulk insert prepare failed", "error", err)
+		return nil, err
+	}
+
+	result, err := statement.Exec(values...)
+	if err != nil {
+		util.Logger.Errorw("bulk insert failed", "error", err)
+		return nil, err
+	}
+
+	rowsAffected, err := result.RowsAffected()
+	if err != nil || rowsAffected != int64(len(entities)) {
+		util.Logger.Errorw("bulk insert incomplete", "error", err, "expected", len(entities), "actual", rowsAffected)
+	}
+
+	util.Logger.Infow("bulk insert successful", "count", len(ids))
+	return ids, nil
 }
 
 func (CashFlowMySqlMapper) UpdateCashFlowByEntity(plainId string) model.CashFlowEntity {

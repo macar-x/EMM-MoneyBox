@@ -1,7 +1,7 @@
 package category_cmd
 
 import (
-	"github.com/emmettwoo/EMM-MoneyBox/service/category_service"
+	"github.com/macar-x/cashlens/service/category_service"
 	"github.com/spf13/cobra"
 )
 

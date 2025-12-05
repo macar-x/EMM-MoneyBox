@@ -4,7 +4,7 @@ import (
 	"errors"
 	"fmt"
 
-	"github.com/emmettwoo/EMM-MoneyBox/mapper/category_mapper"
+	"github.com/macar-x/cashlens/mapper/category_mapper"
 )
 
 func QueryService(plainId, parentPlainId, categoryName string) error {
