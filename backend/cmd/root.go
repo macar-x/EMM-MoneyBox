@@ -5,17 +5,22 @@ import (
 
 	"github.com/macar-x/cashlens/cmd/cash_flow_cmd"
 	"github.com/macar-x/cashlens/cmd/category_cmd"
+	"github.com/macar-x/cashlens/cmd/db_cmd"
 	"github.com/macar-x/cashlens/cmd/manage_cmd"
 	"github.com/macar-x/cashlens/cmd/server_cmd"
 	"github.com/spf13/cobra"
 )
 
 var rootCmd = &cobra.Command{
-	Use:   "EMM-MoneyBox",
-	Short: "root command",
-	Long:  `Welcome to EMM-MoneyBox.`,
+	Use:   "cashlens",
+	Short: "Personal finance management - See your money clearly",
+	Long: `Cashlens - Personal finance management application
+	
+Track your daily cash flow, manage categories, and gain insights into your spending habits.
+Use 'cashlens [command] --help' for more information about a command.`,
 	Run: func(cmd *cobra.Command, args []string) {
-		fmt.Println("Welcome to EMM-MoneyBox.")
+		fmt.Println("Cashlens - See your money clearly")
+		fmt.Println("Use 'cashlens --help' for available commands")
 	},
 }
 
@@ -24,9 +29,9 @@ func Execute() {
 }
 
 func init() {
-	rootCmd.Flags().BoolP("toggle", "t", false, "Help message for toggle")
-	rootCmd.AddCommand(cash_flow_cmd.CashCmd)
-	rootCmd.AddCommand(manage_cmd.ManageCmd)
 	rootCmd.AddCommand(server_cmd.ServerCmd)
+	rootCmd.AddCommand(cash_flow_cmd.CashCmd)
 	rootCmd.AddCommand(category_cmd.CategoryCmd)
+	rootCmd.AddCommand(manage_cmd.ManageCmd)
+	rootCmd.AddCommand(db_cmd.DbCmd)
 }

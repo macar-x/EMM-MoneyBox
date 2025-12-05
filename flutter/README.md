@@ -102,7 +102,7 @@ flutter build web --release --dart-define=API_BASE_URL=https://api.yourdomain.co
 
 **Default:** `http://localhost:8080`
 
-See [../ENVIRONMENT.md](../ENVIRONMENT.md) for detailed configuration guide.
+See [../docs/ENVIRONMENT.md](../docs/ENVIRONMENT.md) for detailed configuration guide.
 
 ## Development
 
@@ -127,7 +127,7 @@ flutter test
 
 ## Features (Planned)
 
-See [TODO.md](../TODO.md) for the complete feature roadmap.
+See [../docs/TODO.md](../docs/TODO.md) for the complete feature roadmap.
 
 ### Core Features
 - Dashboard with financial overview
@@ -148,6 +148,11 @@ See [TODO.md](../TODO.md) for the complete feature roadmap.
 ## API Integration
 
 The app connects to the Cashlens backend API. See [backend README](../backend/README.md) for API documentation.
+
+## Documentation
+
+- **[Setup Guide](docs/SETUP.md)** - Platform-specific setup and configuration
+- **[Testing Guide](docs/TESTING.md)** - Flutter testing guide
 
 ## License
 

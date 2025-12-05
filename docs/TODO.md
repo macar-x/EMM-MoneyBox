@@ -10,7 +10,19 @@
 
 ---
 
-## Backend API Development
+## Backend Development
+
+### CLI Infrastructure (Completed ✅)
+- ✅ Rebrand from EMM-MoneyBox to Cashlens
+- ✅ Version command
+- ✅ Cash flow commands (income, outcome, query, delete, update, list, range, summary)
+- ✅ Category commands (create, query, delete, update, list)
+- ✅ Data management commands (export, import, backup, restore, init, reset, stats)
+- ✅ Database commands (connect, seed)
+- ✅ Improved help text and command structure
+- ✅ CLI documentation (backend/docs/CLI.md)
+
+**Note**: Most new commands have CLI structure in place but need database service implementation.
 
 ### Cash Flow API (In Progress)
 - ✅ POST `/api/cash/outcome` - Create expense

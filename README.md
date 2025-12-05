@@ -39,7 +39,7 @@ MYSQL_DB_URI=username:password@tcp(localhost:3306)/cashlens
 export $(cat .env | xargs)
 ```
 
-See [ENVIRONMENT.md](ENVIRONMENT.md) for detailed configuration guide.
+See [docs/ENVIRONMENT.md](docs/ENVIRONMENT.md) for detailed configuration guide.
 
 ### CLI Commands
 
@@ -88,7 +88,7 @@ go run main.go server start -p 8080
 - `DELETE /api/cash/{id}` - Delete by ID
 - `DELETE /api/cash/date/{date}` - Delete by date
 
-See [TODO.md](TODO.md) for planned API endpoints.
+See [backend/docs/API.md](backend/docs/API.md) for complete API reference.
 
 ### Docker
 
@@ -98,6 +98,8 @@ cd backend
 docker-compose up --build
 ```
 
+See [docs/DOCKER.md](docs/DOCKER.md) for detailed Docker setup.
+
 ## Flutter UI (Coming Soon)
 
 A cross-platform UI built with Flutter supporting:
@@ -105,11 +107,11 @@ A cross-platform UI built with Flutter supporting:
 - Android
 - iOS
 
-See [TODO.md](TODO.md) for the complete development roadmap.
+See [flutter/docs/SETUP.md](flutter/docs/SETUP.md) for platform setup.
 
 ## Development Roadmap
 
-Check [TODO.md](TODO.md) for:
+Check [docs/TODO.md](docs/TODO.md) for:
 - Planned backend API endpoints
 - Flutter UI features
 - Future enhancements
