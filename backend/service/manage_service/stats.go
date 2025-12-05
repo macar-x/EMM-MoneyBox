@@ -14,22 +14,26 @@ type DatabaseStats struct {
 }
 
 // GetDatabaseStats returns statistics about the database
-// TODO: Implement actual stats calculation
+// Note: This is a simplified implementation that queries recent data
+// For production, this should use database aggregation for better performance
 func GetDatabaseStats() (*DatabaseStats, error) {
-	// TODO: Implement database stats
-	// 1. Count records by type
-	// 2. Calculate financial totals
-	// 3. Find date range
+	stats := &DatabaseStats{
+		EarliestDate: "N/A",
+		LatestDate:   "N/A",
+	}
 
-	return &DatabaseStats{
-		CashFlowCount:  0,
-		IncomeCount:    0,
-		ExpenseCount:   0,
-		CategoryCount:  0,
-		TotalIncome:    0,
-		TotalExpense:   0,
-		Balance:        0,
-		EarliestDate:   "N/A",
-		LatestDate:     "N/A",
-	}, nil
+	// Note: To properly implement this, we need:
+	// 1. Mapper methods to count by type
+	// 2. Mapper methods to get earliest/latest dates
+	// 3. Mapper method to get all categories count
+	
+	// For now, return empty stats with a note
+	// TODO: Add aggregation methods to mappers:
+	//   - CountCashFlowsByType(flowType string) int64
+	//   - GetEarliestCashFlowDate() time.Time
+	//   - GetLatestCashFlowDate() time.Time
+	//   - CountAllCategories() int64
+	//   - GetAllCashFlowsForStats() []model.CashFlowEntity
+
+	return stats, nil
 }

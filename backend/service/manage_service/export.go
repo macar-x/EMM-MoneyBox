@@ -71,7 +71,6 @@ func saveExcelFile(file *excelize.File, filePath string) {
 	// 根據指定路徑保存活頁簿
 	writeExcelRow(file, defaultSheetName, "A2", "Ended Time")
 	writeExcelRow(file, defaultSheetName, "B2", time.Now())
-	// fixme: support specific output path
 	if err := file.SaveAs(filePath); err != nil {
 		util.Logger.Errorln(err)
 	}

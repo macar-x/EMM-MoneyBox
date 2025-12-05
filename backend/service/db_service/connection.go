@@ -1,7 +1,10 @@
 package db_service
 
 import (
-	"errors"
+	"strings"
+
+	"github.com/macar-x/cashlens/util"
+	"github.com/macar-x/cashlens/util/database"
 )
 
 // ConnectionInfo represents database connection information
@@ -13,12 +16,47 @@ type ConnectionInfo struct {
 }
 
 // TestConnection tests the database connection
-// TODO: Implement actual connection test
 func TestConnection() (*ConnectionInfo, error) {
-	// TODO: Implement connection test
-	// 1. Get database configuration
-	// 2. Attempt connection
-	// 3. Return connection info
+	info := &ConnectionInfo{
+		Type:     util.GetConfigByKey("db.type"),
+		Database: util.GetConfigByKey("db.name"),
+		Status:   "disconnected",
+	}
 
-	return nil, errors.New("database connection test not yet implemented - requires database integration")
+	// Get host from connection string
+	switch info.Type {
+	case "mongodb":
+		uri := util.GetConfigByKey("mongodb.uri")
+		// Extract host from MongoDB URI (simplified)
+		if strings.Contains(uri, "@") {
+			parts := strings.Split(uri, "@")
+			if len(parts) > 1 {
+				hostPart := strings.Split(parts[1], "/")[0]
+				info.Host = hostPart
+			}
+		}
+		
+		// Test connection by opening and closing
+		database.OpenMongoDbConnection(database.CashFlowTableName)
+		database.CloseMongoDbConnection()
+		info.Status = "connected"
+		
+	case "mysql":
+		uri := util.GetConfigByKey("mysql.uri")
+		// Extract host from MySQL URI (simplified)
+		if strings.Contains(uri, "@tcp(") {
+			parts := strings.Split(uri, "@tcp(")
+			if len(parts) > 1 {
+				hostPart := strings.Split(parts[1], ")")[0]
+				info.Host = hostPart
+			}
+		}
+		
+		// Test connection by getting connection and closing
+		_ = database.GetMySqlConnection()
+		database.CloseMySqlConnection()
+		info.Status = "connected"
+	}
+
+	return info, nil
 }

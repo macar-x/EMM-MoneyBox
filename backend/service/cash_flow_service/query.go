@@ -65,7 +65,6 @@ func QueryByDate(belongsDate string) ([]model.CashFlowEntity, error) {
 	}
 
 	matchedCashFlowList := cash_flow_mapper.INSTANCE.GetCashFlowsByBelongsDate(queryDate)
-	// todo(emmett): when query result no match, consider return empty array rather than a nil interface.
 	return matchedCashFlowList, nil
 }
 

@@ -24,6 +24,85 @@
 
 **Note**: Most new commands have CLI structure in place but need database service implementation.
 
+### Mapper Layer Enhancements (High Priority)
+
+**Update Methods** - Accept entity parameter instead of just ID:
+- [ ] Enhance `CashFlowMapper.UpdateCashFlowByEntity(plainId, entity)` in MongoDB mapper
+- [ ] Enhance `CashFlowMapper.UpdateCashFlowByEntity(plainId, entity)` in MySQL mapper
+- [ ] Enhance `CategoryMapper.UpdateCategoryByEntity(plainId, entity)` in MongoDB mapper
+- [ ] Enhance `CategoryMapper.UpdateCategoryByEntity(plainId, entity)` in MySQL mapper
+
+**List/Query Methods** - Add pagination support:
+- [ ] Add `CashFlowMapper.GetAllCashFlows(flowType, limit, offset)` to interface
+- [ ] Implement GetAllCashFlows in MongoDB mapper
+- [ ] Implement GetAllCashFlows in MySQL mapper
+- [ ] Add `CategoryMapper.GetAllCategories()` to interface
+- [ ] Implement GetAllCategories in MongoDB mapper
+- [ ] Implement GetAllCategories in MySQL mapper
+
+**Bulk Operations** - For backup/restore/reset:
+- [ ] Add `CashFlowMapper.DeleteAllCashFlows()` to interface
+- [ ] Add `CategoryMapper.DeleteAllCategories()` to interface
+- [ ] Add `CashFlowMapper.BulkInsertCashFlows(entities)` for import performance
+- [ ] Implement bulk operations in both MongoDB and MySQL mappers
+
+**Aggregation Methods** - For statistics:
+- [ ] Add `CashFlowMapper.CountCashFlowsByType(flowType)` to interface
+- [ ] Add `CashFlowMapper.GetEarliestCashFlowDate()` to interface
+- [ ] Add `CashFlowMapper.GetLatestCashFlowDate()` to interface
+- [ ] Add `CategoryMapper.CountAllCategories()` to interface
+- [ ] Implement aggregation methods in both mappers
+
+**Security & Performance**:
+- [ ] Fix SQL injection vulnerability in MySQL mapper (use parameterized queries)
+- [ ] Add transaction support for rollback on errors
+- [ ] Consider Redis caching for category lookups
+- [ ] Add database indexes for performance
+
+### Architecture Refactoring (Medium Priority)
+
+**Code Quality & Maintainability**:
+- [x] Add constants for magic strings (FlowType, DateFormat, TableNames)
+- [ ] Add validation layer before service calls
+- [ ] Implement error wrapping with context
+- [ ] Add structured logging standards across all layers
+- [ ] Create common response/error types
+- [ ] Add metrics/monitoring hooks
+
+**Performance Optimizations**:
+- [ ] Optimize date range queries (single query instead of N queries per day)
+- [ ] Implement connection pooling for database
+- [ ] Add batch operations for bulk inserts
+- [ ] Implement category caching (Redis or in-memory)
+- [ ] Add database indexes:
+  - `cash_flow.belongs_date` (for date queries)
+  - `cash_flow.flow_type` (for type filtering)
+  - `category.name` (for name lookups)
+- [ ] Optimize summary calculations (database aggregation instead of in-memory)
+
+**Modern Patterns**:
+- [ ] Implement dependency injection pattern
+- [ ] Add context propagation for cancellation/timeout
+- [ ] Implement graceful shutdown for server
+- [ ] Add retry logic with exponential backoff
+- [ ] Implement circuit breaker for database calls
+- [ ] Add request tracing/correlation IDs
+
+**Testing Infrastructure**:
+- [ ] Add unit tests for all services
+- [ ] Add integration tests for mappers
+- [ ] Add end-to-end CLI tests
+- [ ] Add benchmark tests for performance
+- [ ] Set up CI/CD pipeline
+- [ ] Add test coverage reporting (target: 80%+)
+
+**Database Layer**:
+- [ ] Standardize collection names (singular vs plural)
+- [ ] Add migration system for schema changes
+- [ ] Implement database health checks
+- [ ] Add query timeout configuration
+- [ ] Implement read replicas support (future)
+
 ### Cash Flow API (In Progress)
 - ✅ POST `/api/cash/outcome` - Create expense
 - ✅ POST `/api/cash/income` - Create income

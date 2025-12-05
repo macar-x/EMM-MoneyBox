@@ -11,7 +11,8 @@ import (
 	"github.com/shopspring/decimal"
 )
 
-// todo: merge income & outcome into one service.
+// SaveIncome creates a new income cash flow record
+// Note: Could be merged with SaveOutcome into a single SaveCashFlow(flowType, ...) function
 func SaveIncome(belongsDate, categoryName string, amount float64, description string) (model.CashFlowEntity, error) {
 
 	// 取小數點後兩位

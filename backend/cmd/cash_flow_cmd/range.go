@@ -4,6 +4,7 @@ import (
 	"errors"
 	"fmt"
 
+	"github.com/macar-x/cashlens/model"
 	"github.com/macar-x/cashlens/service/cash_flow_service"
 	"github.com/spf13/cobra"
 )
@@ -34,7 +35,7 @@ Displays all transactions between from-date and to-date (inclusive).`,
 		var totalIncome, totalExpense float64
 		for index, cashFlowEntity := range cashFlowEntityList {
 			fmt.Println("cash_flow", index, ":", cashFlowEntity.ToString())
-			if cashFlowEntity.FlowType == "income" {
+			if cashFlowEntity.FlowType == model.FlowTypeIncome {
 				totalIncome += cashFlowEntity.Amount
 			} else {
 				totalExpense += cashFlowEntity.Amount

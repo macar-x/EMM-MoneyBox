@@ -5,12 +5,17 @@ import (
 )
 
 // ResetDatabase clears all data from the database
-// TODO: Implement actual reset logic
 func ResetDatabase() error {
-	// TODO: Implement database reset
-	// 1. Delete all cash flow records
-	// 2. Delete all categories
-	// 3. Reset any sequences/counters
-
-	return errors.New("database reset functionality not yet implemented - requires database integration")
+	// Note: To properly implement this, we need:
+	// 1. Mapper method to delete all cash flows: DeleteAllCashFlows()
+	// 2. Mapper method to delete all categories: DeleteAllCategories()
+	
+	// This is a dangerous operation and should be implemented carefully
+	// with proper transaction support and confirmation
+	
+	// TODO: Add to mapper interfaces:
+	//   - DeleteAllCashFlows() int64
+	//   - DeleteAllCategories() int64
+	
+	return errors.New("database reset requires mapper enhancement - need DeleteAll methods")
 }

@@ -5,12 +5,14 @@ import (
 )
 
 // ListAllService lists all categories
-// TODO: Implement actual list query with database
+// Note: This requires a new mapper method GetAllCategories()
+// The current mapper only has GetCategoryByObjectId, GetCategoryByName, GetCategoryByParentId
 func ListAllService() error {
-	// TODO: Implement database list query
-	// 1. Query all categories
-	// 2. Format and print results
-
-	fmt.Println("Category list functionality not yet implemented - requires database integration")
+	// TODO: Add GetAllCategories() method to category_mapper interface
+	// For now, we can query by empty parent to get root categories
+	// But this won't get all categories in a hierarchical structure
+	
+	fmt.Println("Category list functionality requires mapper enhancement")
+	fmt.Println("Need to add GetAllCategories() method to category_mapper interface")
 	return nil
 }
