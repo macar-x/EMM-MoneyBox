@@ -5,6 +5,7 @@ import (
 	"database/sql"
 	"time"
 
+	"github.com/macar-x/cashlens/cache"
 	"github.com/macar-x/cashlens/model"
 	"github.com/macar-x/cashlens/util"
 	"github.com/macar-x/cashlens/util/database"
@@ -38,6 +39,13 @@ func (CategoryMySqlMapper) GetCategoryByObjectId(plainId string) model.CategoryE
 
 func (CategoryMySqlMapper) GetCategoryByName(categoryName string) model.CategoryEntity {
 
+	// Check cache first
+	categoryCache := cache.GetCategoryCache()
+	if cached, ok := categoryCache.GetByName(categoryName); ok {
+		return *cached
+	}
+
+	// Cache miss - query database
 	var sqlString bytes.Buffer
 	sqlString.WriteString("SELECT ID, PARENT_ID, NAME FROM ")
 	sqlString.WriteString(database.CategoryTableName)
@@ -56,6 +64,12 @@ func (CategoryMySqlMapper) GetCategoryByName(categoryName string) model.Category
 		categoryEntity = convertRow2CategoryEntity(rows)
 		break
 	}
+
+	// Store in cache if found
+	if !categoryEntity.IsEmpty() {
+		categoryCache.Set(&categoryEntity)
+	}
+
 	return categoryEntity
 }
 
@@ -116,6 +130,10 @@ func (CategoryMySqlMapper) InsertCategoryByEntity(newEntity model.CategoryEntity
 		// fixme: maybe we should have a rollback here.
 		util.Logger.Errorw("insert failed", "error", err, "rows_affected", rowsAffected)
 	}
+
+	// Invalidate cache on insert
+	cache.GetCategoryCache().Clear()
+
 	return newPlainId
 }
 
@@ -158,6 +176,10 @@ func (CategoryMySqlMapper) UpdateCategoryByEntity(plainId string) model.Category
 		// fixme: maybe we should have a rollback here.
 		util.Logger.Errorw("update failed", "error", err, "rows_affected", rowsAffected)
 	}
+
+	// Invalidate cache on update
+	cache.GetCategoryCache().Clear()
+
 	return targetEntity
 }
 
@@ -198,6 +220,10 @@ func (CategoryMySqlMapper) DeleteCategoryByObjectId(plainId string) model.Catego
 		// fixme: maybe we should have a rollback here.
 		util.Logger.Errorw("delete failed", "error", err, "rows_affected", rowsAffected)
 	}
+
+	// Invalidate cache on delete
+	cache.GetCategoryCache().Clear()
+
 	return targetEntity
 }
 
