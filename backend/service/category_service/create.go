@@ -12,7 +12,6 @@ import (
 )
 
 func CreateService(parentPlainId, categoryName string) error {
-
 	// Validate category name
 	if err := validation.ValidateCategoryName(categoryName); err != nil {
 		return err
@@ -25,7 +24,7 @@ func CreateService(parentPlainId, categoryName string) error {
 		}
 	}
 
-	var categoryEntity = model.CategoryEntity{
+	categoryEntity := model.CategoryEntity{
 		ParentId: primitive.NilObjectID,
 		Name:     categoryName,
 	}
@@ -33,17 +32,16 @@ func CreateService(parentPlainId, categoryName string) error {
 		categoryEntity.ParentId = util.Convert2ObjectId(parentPlainId)
 	}
 
-	var newCategoryPlainId = category_mapper.INSTANCE.InsertCategoryByEntity(categoryEntity)
+	newCategoryPlainId := category_mapper.INSTANCE.InsertCategoryByEntity(categoryEntity)
 	if newCategoryPlainId == "" {
 		return errors.New("category create failed")
 	}
 
-	var newCategoryEntity = category_mapper.INSTANCE.GetCategoryByObjectId(newCategoryPlainId)
+	newCategoryEntity := category_mapper.INSTANCE.GetCategoryByObjectId(newCategoryPlainId)
 	fmt.Println("category ", 0, ": ", newCategoryEntity.ToString())
 	return nil
 }
 
 func isCreateRequiredFiledSatisfied(categoryName string) bool {
-
 	return categoryName != ""
 }

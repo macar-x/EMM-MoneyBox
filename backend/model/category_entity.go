@@ -21,7 +21,6 @@ func (entity CategoryEntity) IsEmpty() bool {
 }
 
 func (entity CategoryEntity) ToString() string {
-
 	return "[ " +
 		"Id: " + entity.Id.Hex() +
 		", Name: " + entity.Name +

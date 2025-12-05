@@ -84,6 +84,6 @@ func UpdateById(plainId, belongsDate, categoryName string, amount float64, descr
 	// It only takes ID and updates the modify time
 	// For now, we return an error indicating this limitation
 	// TODO: Enhance mapper to accept updated entity fields
-	
+
 	return model.CashFlowEntity{}, errors.New("update functionality requires mapper enhancement - mapper.UpdateCashFlowByEntity needs to accept entity parameter")
 }

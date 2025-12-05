@@ -8,8 +8,10 @@ import (
 	"github.com/spf13/cobra"
 )
 
-var summaryPeriod string
-var summaryDate string
+var (
+	summaryPeriod string
+	summaryDate   string
+)
 
 var summaryCmd = &cobra.Command{
 	Use:   "summary",
@@ -56,7 +58,7 @@ func init() {
 		&summaryPeriod, "period", "p", "", "summary period (daily/monthly/yearly) (required)")
 	summaryCmd.Flags().StringVarP(
 		&summaryDate, "date", "d", "", "date for summary (format: YYYY-MM-DD for daily, YYYY-MM for monthly, YYYY for yearly) (required)")
-	
+
 	summaryCmd.MarkFlagRequired("period")
 	summaryCmd.MarkFlagRequired("date")
 	CashCmd.AddCommand(summaryCmd)

@@ -19,8 +19,10 @@ type CategoryCache struct {
 	lastClear time.Time
 }
 
-var instance *CategoryCache
-var once sync.Once
+var (
+	instance *CategoryCache
+	once     sync.Once
+)
 
 // GetCategoryCache returns the singleton category cache instance
 func GetCategoryCache() *CategoryCache {
