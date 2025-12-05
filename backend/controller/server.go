@@ -5,14 +5,14 @@ import (
 	"fmt"
 	"net/http"
 
+	"github.com/gorilla/mux"
 	"github.com/macar-x/cashlens/controller/cash_flow_controller"
 	"github.com/macar-x/cashlens/middleware"
-	"github.com/gorilla/mux"
 )
 
 func StartServer(port int32) {
 	r := mux.NewRouter()
-	
+
 	// Register routes
 	registerHealthRoutes(r)
 	registerCashRoute(r)

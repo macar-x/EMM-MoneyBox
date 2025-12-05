@@ -13,9 +13,11 @@ import (
 	"go.mongodb.org/mongo-driver/mongo/options"
 )
 
-var mongoClient *mongo.Client
-var mongoDatabase *mongo.Database
-var collection *mongo.Collection
+var (
+	mongoClient   *mongo.Client
+	mongoDatabase *mongo.Database
+	collection    *mongo.Collection
+)
 
 // InitMongoDbConnection initializes the MongoDB connection pool (called once at startup)
 func InitMongoDbConnection() error {
@@ -99,7 +101,6 @@ func ShutdownMongoDbConnection() {
 }
 
 func GetOneInMongoDB(filter bson.D) bson.M {
-
 	checkDbConnection()
 
 	var resultInBson bson.M
@@ -116,7 +117,6 @@ func GetOneInMongoDB(filter bson.D) bson.M {
 }
 
 func GetManyInMongoDB(filter bson.D) []bson.M {
-
 	checkDbConnection()
 
 	var resultInBsonArray []bson.M
@@ -137,7 +137,6 @@ func GetManyInMongoDB(filter bson.D) []bson.M {
 }
 
 func CountInMongoDB(filter bson.D) int64 {
-
 	checkDbConnection()
 
 	result, err := collection.CountDocuments(context.TODO(), filter)
@@ -149,7 +148,6 @@ func CountInMongoDB(filter bson.D) int64 {
 }
 
 func InsertOneInMongoDB(data bson.D) primitive.ObjectID {
-
 	checkDbConnection()
 
 	/* result:
@@ -166,7 +164,6 @@ func InsertOneInMongoDB(data bson.D) primitive.ObjectID {
 }
 
 func UpdateManyInMongoDB(filter, data bson.D) int64 {
-
 	checkDbConnection()
 
 	updateData := bson.D{
@@ -182,7 +179,6 @@ func UpdateManyInMongoDB(filter, data bson.D) int64 {
 }
 
 func DeleteManyInMongoDB(filter bson.D) int64 {
-
 	checkDbConnection()
 
 	result, err := collection.DeleteMany(context.TODO(), filter)

@@ -12,9 +12,8 @@ import (
 )
 
 func IsDeleteFieldsConflicted(plainId, belongsDate string) bool {
-
 	// check if already one semi-optional field is filled
-	var semiOptionalFieldFilledFlag = false
+	semiOptionalFieldFilledFlag := false
 
 	// plain_id is not empty
 	if plainId != "" {
@@ -34,13 +33,12 @@ func IsDeleteFieldsConflicted(plainId, belongsDate string) bool {
 }
 
 func DeleteById(plainId string) (model.CashFlowEntity, error) {
-
 	// Validate ID
 	if err := validation.ValidateID(plainId); err != nil {
 		return model.CashFlowEntity{}, err
 	}
 
-	var existCashFlowEntity = cash_flow_mapper.INSTANCE.GetCashFlowByObjectId(plainId)
+	existCashFlowEntity := cash_flow_mapper.INSTANCE.GetCashFlowByObjectId(plainId)
 	if existCashFlowEntity.IsEmpty() {
 		return model.CashFlowEntity{}, errors.New("cash_flow not found")
 	}
@@ -53,13 +51,12 @@ func DeleteById(plainId string) (model.CashFlowEntity, error) {
 }
 
 func DeleteByDate(belongsDate string) ([]model.CashFlowEntity, error) {
-
 	// Validate date
 	if err := validation.ValidateDate(belongsDate); err != nil {
 		return []model.CashFlowEntity{}, err
 	}
 
-	var deleteDate = util.FormatDateFromStringWithoutDash(belongsDate)
+	deleteDate := util.FormatDateFromStringWithoutDash(belongsDate)
 	if reflect.DeepEqual(deleteDate, time.Time{}) {
 		return []model.CashFlowEntity{}, errors.New("belongs_date error, try format like 19700101")
 	}

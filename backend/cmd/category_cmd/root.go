@@ -6,9 +6,11 @@ import (
 	"github.com/spf13/cobra"
 )
 
-var plainId string
-var parentPlainId string
-var categoryName string
+var (
+	plainId       string
+	parentPlainId string
+	categoryName  string
+)
 
 var CategoryCmd = &cobra.Command{
 	Use:   "category",

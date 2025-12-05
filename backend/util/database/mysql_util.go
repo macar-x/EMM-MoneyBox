@@ -14,7 +14,6 @@ import (
 var connection *sql.DB
 
 func GetMySqlConnection() *sql.DB {
-
 	// check and init database setting
 	once.Do(initMySqlConnection)
 	if defaultDatabaseUri == "" {
@@ -30,7 +29,6 @@ func GetMySqlConnection() *sql.DB {
 }
 
 func openMySqlConnection() {
-
 	var err error
 	connection, err = sql.Open("mysql", defaultDatabaseUri+"/"+defaultDatabaseName)
 	if err != nil {
@@ -45,7 +43,6 @@ func openMySqlConnection() {
 }
 
 func CloseMySqlConnection() {
-
 	// do nothing if not connected
 	if !isConnected || reflect.DeepEqual(connection, sql.DB{}) {
 		isConnected = false

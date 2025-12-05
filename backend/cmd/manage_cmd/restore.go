@@ -11,8 +11,10 @@ import (
 	"github.com/spf13/cobra"
 )
 
-var restorePath string
-var forceRestore bool
+var (
+	restorePath  string
+	forceRestore bool
+)
 
 var restoreCmd = &cobra.Command{
 	Use:   "restore",
@@ -27,11 +29,11 @@ WARNING: This will replace all existing data unless --merge is used.`,
 		if !forceRestore {
 			fmt.Println("WARNING: This will replace all existing data!")
 			fmt.Print("Are you sure you want to continue? (yes/no): ")
-			
+
 			reader := bufio.NewReader(os.Stdin)
 			response, _ := reader.ReadString('\n')
 			response = strings.TrimSpace(strings.ToLower(response))
-			
+
 			if response != "yes" && response != "y" {
 				fmt.Println("Restore cancelled")
 				return nil
@@ -53,7 +55,7 @@ func init() {
 		&restorePath, "input", "i", "", "backup file path (required)")
 	restoreCmd.Flags().BoolVarP(
 		&forceRestore, "force", "f", false, "skip confirmation prompt")
-	
+
 	restoreCmd.MarkFlagRequired("input")
 	ManageCmd.AddCommand(restoreCmd)
 }

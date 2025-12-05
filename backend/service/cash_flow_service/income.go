@@ -15,7 +15,6 @@ import (
 // SaveIncome creates a new income cash flow record
 // Note: Could be merged with SaveOutcome into a single SaveCashFlow(flowType, ...) function
 func SaveIncome(belongsDate, categoryName string, amount float64, description string) (model.CashFlowEntity, error) {
-
 	// Validate inputs
 	if err := validation.ValidateCategoryName(categoryName); err != nil {
 		return model.CashFlowEntity{}, err
@@ -61,12 +60,11 @@ func SaveIncome(belongsDate, categoryName string, amount float64, description st
 		return model.CashFlowEntity{}, errors.New("cash_flow create failed")
 	}
 
-	var newCashFlow = cash_flow_mapper.INSTANCE.GetCashFlowByObjectId(newCashFlowId)
+	newCashFlow := cash_flow_mapper.INSTANCE.GetCashFlowByObjectId(newCashFlowId)
 	return newCashFlow, nil
 }
 
 func IsIncomeRequiredFiledSatisfied(categoryName string, amount float64) bool {
-
 	if categoryName == "" {
 		return false
 	}

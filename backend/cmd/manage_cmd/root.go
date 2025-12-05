@@ -6,9 +6,11 @@ import (
 	"github.com/spf13/cobra"
 )
 
-var fromDate string
-var toDate string
-var filePath string
+var (
+	fromDate string
+	toDate   string
+	filePath string
+)
 
 var ManageCmd = &cobra.Command{
 	Use:   "manage",

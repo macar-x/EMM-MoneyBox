@@ -11,9 +11,8 @@ import (
 )
 
 func IsQueryFieldsConflicted(plainId, belongsDate, exactDescription, fuzzyDescription string) bool {
-
 	// check if already one semi-optional field is filled
-	var semiOptionalFieldFilledFlag = false
+	semiOptionalFieldFilledFlag := false
 
 	// plain_id is not empty
 	if plainId != "" {
@@ -49,7 +48,6 @@ func IsQueryFieldsConflicted(plainId, belongsDate, exactDescription, fuzzyDescri
 }
 
 func QueryById(plainId string) (model.CashFlowEntity, error) {
-
 	cashFlowEntity := cash_flow_mapper.INSTANCE.GetCashFlowByObjectId(plainId)
 	if cashFlowEntity.IsEmpty() {
 		return model.CashFlowEntity{}, errors.New("cash_flow not found")
@@ -58,8 +56,7 @@ func QueryById(plainId string) (model.CashFlowEntity, error) {
 }
 
 func QueryByDate(belongsDate string) ([]model.CashFlowEntity, error) {
-
-	var queryDate = util.FormatDateFromStringWithoutDash(belongsDate)
+	queryDate := util.FormatDateFromStringWithoutDash(belongsDate)
 	if reflect.DeepEqual(queryDate, time.Time{}) {
 		return []model.CashFlowEntity{}, errors.New("belongs_date error, try format like 19700101")
 	}

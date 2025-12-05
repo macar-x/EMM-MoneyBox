@@ -12,7 +12,7 @@ func QueryAll(cashType string, limit, offset int) ([]*model.CashFlowEntity, erro
 	// To properly implement this, we need:
 	// 1. New mapper method: GetAllCashFlows(filter, limit, offset)
 	// 2. Database-level pagination and filtering
-	
+
 	// Temporary implementation: return empty list
 	// TODO: Add GetAllCashFlows method to mapper interface
 	return []*model.CashFlowEntity{}, nil

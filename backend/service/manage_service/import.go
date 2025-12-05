@@ -14,14 +14,15 @@ import (
 	"go.mongodb.org/mongo-driver/bson/primitive"
 )
 
-var sheetRowNumberLabel = "row_num"
-var requiredRowFieldList = []string{"BelongsDate", "FlowType", "Amount"}
-var importFailedRowNumberList []int
-var importIgnoredRowNumberList []int
-var importSucceedRowNumberList []int
+var (
+	sheetRowNumberLabel        = "row_num"
+	requiredRowFieldList       = []string{"BelongsDate", "FlowType", "Amount"}
+	importFailedRowNumberList  []int
+	importIgnoredRowNumberList []int
+	importSucceedRowNumberList []int
+)
 
 func ImportService(filePath string) error {
-
 	// 打開並讀取目標文件
 	file := readExcelFile(filePath)
 	if file == nil {
@@ -35,7 +36,7 @@ func ImportService(filePath string) error {
 	}()
 
 	// 獲取工作表列表，遍歷讀取數據
-	var sheetNameList = file.GetSheetList()
+	sheetNameList := file.GetSheetList()
 	for _, currentSheetName := range sheetNameList {
 
 		importSucceedRowNumberList = []int{}
@@ -52,7 +53,7 @@ func ImportService(filePath string) error {
 			util.Logger.Errorw("read sheet rows failed", "error", err)
 		}
 		util.Logger.Infof("processing sheet %s", currentSheetName)
-		var cashFlowMapByDate = readSheetData(rows)
+		cashFlowMapByDate := readSheetData(rows)
 		// fixme: 保存 cashFlowList 時，要考慮事務細粒度，考慮增加 batchInsert()
 		for date, cashFlowMapByColumnList := range cashFlowMapByDate {
 			saveIntoDB(cashFlowMapByColumnList)
@@ -79,12 +80,11 @@ func readExcelFile(fileName string) *excelize.File {
  * 讀取工作表的數據，以 date 爲 key 整理 cashFlows
  */
 func readSheetData(sheetRowCursor *excelize.Rows) map[time.Time][]map[string]string {
-
 	cashFlowMapByDate := make(map[time.Time][]map[string]string)
 
 	// 第一行爲標題行，校驗格式是否正確
 	sheetRowCursor.Next()
-	var currentRowNumber = 1
+	currentRowNumber := 1
 	rowColumnList, err := sheetRowCursor.Columns()
 	if err != nil {
 		util.Logger.Error(err.Error())
@@ -104,13 +104,13 @@ func readSheetData(sheetRowCursor *excelize.Rows) map[time.Time][]map[string]str
 		}
 
 		// 依序組裝每一行數據，形成 title-value Map
-		var cashFlowMapByColumn = map[string]string{}
+		cashFlowMapByColumn := map[string]string{}
 		for index, colCell := range rowColumnList {
 			cashFlowMapByColumn[defaultRowTitle[index]] = colCell
 		}
 		cashFlowMapByColumn[sheetRowNumberLabel] = strconv.Itoa(currentRowNumber)
 		// check category info and get the correct id
-		var newCategoryId = handleCategoryInfo(
+		newCategoryId := handleCategoryInfo(
 			cashFlowMapByColumn["CategoryId"], cashFlowMapByColumn["CategoryName"])
 		if newCategoryId == "" {
 			fmt.Println("failed: row " + strconv.Itoa(currentRowNumber) + ": category not satisfied")
@@ -126,7 +126,7 @@ func readSheetData(sheetRowCursor *excelize.Rows) map[time.Time][]map[string]str
 			continue
 		}
 
-		var cashFlowDate = util.FormatDateFromStringWithoutDash(cashFlowMapByColumn["BelongsDate"])
+		cashFlowDate := util.FormatDateFromStringWithoutDash(cashFlowMapByColumn["BelongsDate"])
 		cashFlowMapByDate[cashFlowDate] = append(cashFlowMapByDate[cashFlowDate], cashFlowMapByColumn)
 	}
 
@@ -159,10 +159,9 @@ func isRequiredFieldSatisfied(currentRowNumber int, columnCellMap map[string]str
 }
 
 func handleCategoryInfo(categoryId, categoryName string) string {
-
 	// use category id to fetch first
 	if categoryId != "" {
-		var categoryEntity = category_mapper.INSTANCE.GetCategoryByObjectId(categoryId)
+		categoryEntity := category_mapper.INSTANCE.GetCategoryByObjectId(categoryId)
 		if !categoryEntity.IsEmpty() {
 			return categoryEntity.Id.Hex()
 		}
@@ -182,7 +181,7 @@ func handleCategoryInfo(categoryId, categoryName string) string {
 	util.Logger.Warnw("category not existed", "category_name", categoryName)
 
 	// create new category for this flow
-	var plainId = category_mapper.INSTANCE.InsertCategoryByEntity(model.CategoryEntity{
+	plainId := category_mapper.INSTANCE.InsertCategoryByEntity(model.CategoryEntity{
 		Name:   categoryName,
 		Remark: "create by import",
 	})
@@ -191,9 +190,9 @@ func handleCategoryInfo(categoryId, categoryName string) string {
 
 func saveIntoDB(cashFlowMapByColumnList []map[string]string) {
 	for _, cashFlowMapByColumn := range cashFlowMapByColumnList {
-		var cashFlowEntity = model.CashFlowEntity{}.Build(cashFlowMapByColumn)
+		cashFlowEntity := model.CashFlowEntity{}.Build(cashFlowMapByColumn)
 		if cashFlowEntity.Id != primitive.NilObjectID {
-			var existedCashFlow = cash_flow_mapper.INSTANCE.GetCashFlowByObjectId(cashFlowEntity.Id.Hex())
+			existedCashFlow := cash_flow_mapper.INSTANCE.GetCashFlowByObjectId(cashFlowEntity.Id.Hex())
 			if !existedCashFlow.IsEmpty() {
 				util.Logger.Warnw("cash_flow existed, ignored import.",
 					sheetRowNumberLabel, cashFlowMapByColumn[sheetRowNumberLabel],
@@ -204,7 +203,7 @@ func saveIntoDB(cashFlowMapByColumnList []map[string]string) {
 				continue
 			}
 		}
-		var newPlainId = cash_flow_mapper.INSTANCE.InsertCashFlowByEntity(cashFlowEntity)
+		newPlainId := cash_flow_mapper.INSTANCE.InsertCashFlowByEntity(cashFlowEntity)
 		cashFlowEntity.Id = util.Convert2ObjectId(newPlainId)
 		util.Logger.Debug("cash_flow inserted: " + cashFlowEntity.ToString())
 		fmt.Println("succeed: row " + cashFlowMapByColumn[sheetRowNumberLabel] + ": cash_flow saved")

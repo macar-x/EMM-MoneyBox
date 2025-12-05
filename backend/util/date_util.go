@@ -5,8 +5,10 @@ import (
 	"time"
 )
 
-var defaultDateFormatInString = "20060102"
-var dateFormatInStringWithDash = "2006-01-02"
+var (
+	defaultDateFormatInString  = "20060102"
+	dateFormatInStringWithDash = "2006-01-02"
+)
 
 func FormatDateFromStringWithoutDash(dateString string) time.Time {
 	return formatDateFromString(dateString, defaultDateFormatInString)

@@ -10,7 +10,6 @@ import (
 )
 
 func DeleteService(plainId, categoryName string) error {
-
 	if isDeleteFieldsConflicted(plainId, categoryName) {
 		return errors.New("should have one and only one delete type")
 	}
@@ -27,9 +26,8 @@ func DeleteService(plainId, categoryName string) error {
 }
 
 func isDeleteFieldsConflicted(plainId, categoryName string) bool {
-
 	// check if already one semi-optional field is filled
-	var semiOptionalFieldFilledFlag = false
+	semiOptionalFieldFilledFlag := false
 
 	// plain_id is not empty
 	if plainId != "" {
@@ -49,13 +47,12 @@ func isDeleteFieldsConflicted(plainId, categoryName string) bool {
 }
 
 func deleteById(plainId string) error {
-
 	// Validate ID
 	if err := validation.ValidateID(plainId); err != nil {
 		return err
 	}
 
-	var existCategoryEntity = category_mapper.INSTANCE.GetCategoryByObjectId(plainId)
+	existCategoryEntity := category_mapper.INSTANCE.GetCategoryByObjectId(plainId)
 	if existCategoryEntity.IsEmpty() {
 		fmt.Println("category not found")
 		return nil
@@ -74,13 +71,12 @@ func deleteById(plainId string) error {
 }
 
 func deleteByName(categoryName string) error {
-
 	// Validate category name
 	if err := validation.ValidateCategoryName(categoryName); err != nil {
 		return err
 	}
 
-	var existCategoryEntity = category_mapper.INSTANCE.GetCategoryByName(categoryName)
+	existCategoryEntity := category_mapper.INSTANCE.GetCategoryByName(categoryName)
 	if existCategoryEntity.IsEmpty() {
 		fmt.Println("category not found")
 		return nil

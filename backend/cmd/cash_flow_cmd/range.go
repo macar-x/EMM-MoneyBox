@@ -9,8 +9,10 @@ import (
 	"github.com/spf13/cobra"
 )
 
-var fromDate string
-var toDate string
+var (
+	fromDate string
+	toDate   string
+)
 
 var rangeCmd = &cobra.Command{
 	Use:   "range",
@@ -58,7 +60,7 @@ func init() {
 		&fromDate, "from", "f", "", "start date (YYYY-MM-DD) (required)")
 	rangeCmd.Flags().StringVarP(
 		&toDate, "to", "t", "", "end date (YYYY-MM-DD) (required)")
-	
+
 	rangeCmd.MarkFlagRequired("from")
 	rangeCmd.MarkFlagRequired("to")
 	CashCmd.AddCommand(rangeCmd)

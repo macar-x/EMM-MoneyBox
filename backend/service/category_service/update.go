@@ -33,6 +33,6 @@ func UpdateService(plainId, parentPlainId, categoryName string) error {
 	// Note: Similar to cash_flow update, the mapper's UpdateCategoryByEntity
 	// doesn't accept the updated entity fields
 	// TODO: Enhance mapper to accept updated entity fields
-	
+
 	return errors.New("category update functionality requires mapper enhancement - mapper.UpdateCategoryByEntity needs to accept entity parameter")
 }

@@ -3,9 +3,9 @@ package cash_flow_controller
 import (
 	"net/http"
 
+	"github.com/gorilla/mux"
 	"github.com/macar-x/cashlens/service/cash_flow_service"
 	"github.com/macar-x/cashlens/util"
-	"github.com/gorilla/mux"
 )
 
 func QueryById(w http.ResponseWriter, r *http.Request) {

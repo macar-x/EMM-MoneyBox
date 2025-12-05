@@ -6,12 +6,14 @@ import (
 	"github.com/spf13/cobra"
 )
 
-var plainId string
-var amount float64
-var belongsDate string
-var categoryName string
-var descriptionExact string
-var descriptionFuzzy string
+var (
+	plainId          string
+	amount           float64
+	belongsDate      string
+	categoryName     string
+	descriptionExact string
+	descriptionFuzzy string
+)
 
 var CashCmd = &cobra.Command{
 	Use:   "cash",

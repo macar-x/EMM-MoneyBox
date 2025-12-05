@@ -14,7 +14,6 @@ import (
 type CategoryMongoDbMapper struct{}
 
 func (CategoryMongoDbMapper) GetCategoryByObjectId(plainId string) model.CategoryEntity {
-
 	objectId := util.Convert2ObjectId(plainId)
 	if plainId == "" || objectId == primitive.NilObjectID {
 		util.Logger.Warnln("category's id is not acceptable")
@@ -31,7 +30,6 @@ func (CategoryMongoDbMapper) GetCategoryByObjectId(plainId string) model.Categor
 }
 
 func (CategoryMongoDbMapper) GetCategoryByName(categoryName string) model.CategoryEntity {
-
 	// Check cache first
 	categoryCache := cache.GetCategoryCache()
 	if cached, ok := categoryCache.GetByName(categoryName); ok {
@@ -56,7 +54,6 @@ func (CategoryMongoDbMapper) GetCategoryByName(categoryName string) model.Catego
 }
 
 func (CategoryMongoDbMapper) GetCategoryByParentId(parentPlainId string) []model.CategoryEntity {
-
 	filter := bson.D{
 		primitive.E{Key: "parent_id", Value: parentPlainId},
 	}
@@ -74,61 +71,22 @@ func (CategoryMongoDbMapper) GetCategoryByParentId(parentPlainId string) []model
 }
 
 func (CategoryMongoDbMapper) InsertCategoryByEntity(newEntity model.CategoryEntity) string {
-
-	var operatingTime = time.Now()
+	operatingTime := time.Now()
 	newEntity.CreateTime = operatingTime
 	newEntity.ModifyTime = operatingTime
 
 	database.OpenMongoDbConnection(database.CategoryTableName)
 	defer database.CloseMongoDbConnection()
 
-	var newCategoryId = database.InsertOneInMongoDB(convertCategoryEntity2BsonD(newEntity))
-	
+	newCategoryId := database.InsertOneInMongoDB(convertCategoryEntity2BsonD(newEntity))
+
 	// Invalidate cache on insert
 	cache.GetCategoryCache().Clear()
-	
+
 	return newCategoryId.Hex()
 }
 
 func (CategoryMongoDbMapper) UpdateCategoryByEntity(plainId string) model.CategoryEntity {
-
-	var objectId = util.Convert2ObjectId(plainId)
-	if plainId == "" || objectId == primitive.NilObjectID {
-		util.Logger.Warnln("category's id is not acceptable")
-		return model.CategoryEntity{}
-	}
-
-	filter := bson.D{
-		primitive.E{Key: "_id", Value: objectId},
-	}
-
-	database.OpenMongoDbConnection(database.CategoryTableName)
-	defer database.CloseMongoDbConnection()
-
-	var targetEntity = convertBsonM2CategoryEntity(database.GetOneInMongoDB(filter))
-	if targetEntity.IsEmpty() {
-		util.Logger.Infoln("category is not exist")
-		return model.CategoryEntity{}
-	}
-
-	// todo: update specific fields by passing params (parentId, name)
-	targetEntity.ModifyTime = time.Now()
-
-	var rowsAffected = database.UpdateManyInMongoDB(filter, convertCategoryEntity2BsonD(targetEntity))
-	if rowsAffected != 1 {
-		// fixme: maybe we should have a rollback here.
-		util.Logger.Errorw("update failed", "rows_affected", rowsAffected)
-		return model.CategoryEntity{}
-	}
-
-	// Invalidate cache on update
-	cache.GetCategoryCache().Clear()
-
-	return model.CategoryEntity{}
-}
-
-func (CategoryMongoDbMapper) DeleteCategoryByObjectId(plainId string) model.CategoryEntity {
-
 	objectId := util.Convert2ObjectId(plainId)
 	if plainId == "" || objectId == primitive.NilObjectID {
 		util.Logger.Warnln("category's id is not acceptable")
@@ -142,7 +100,43 @@ func (CategoryMongoDbMapper) DeleteCategoryByObjectId(plainId string) model.Cate
 	database.OpenMongoDbConnection(database.CategoryTableName)
 	defer database.CloseMongoDbConnection()
 
-	var targetEntity = convertBsonM2CategoryEntity(database.GetOneInMongoDB(filter))
+	targetEntity := convertBsonM2CategoryEntity(database.GetOneInMongoDB(filter))
+	if targetEntity.IsEmpty() {
+		util.Logger.Infoln("category is not exist")
+		return model.CategoryEntity{}
+	}
+
+	// todo: update specific fields by passing params (parentId, name)
+	targetEntity.ModifyTime = time.Now()
+
+	rowsAffected := database.UpdateManyInMongoDB(filter, convertCategoryEntity2BsonD(targetEntity))
+	if rowsAffected != 1 {
+		// fixme: maybe we should have a rollback here.
+		util.Logger.Errorw("update failed", "rows_affected", rowsAffected)
+		return model.CategoryEntity{}
+	}
+
+	// Invalidate cache on update
+	cache.GetCategoryCache().Clear()
+
+	return model.CategoryEntity{}
+}
+
+func (CategoryMongoDbMapper) DeleteCategoryByObjectId(plainId string) model.CategoryEntity {
+	objectId := util.Convert2ObjectId(plainId)
+	if plainId == "" || objectId == primitive.NilObjectID {
+		util.Logger.Warnln("category's id is not acceptable")
+		return model.CategoryEntity{}
+	}
+
+	filter := bson.D{
+		primitive.E{Key: "_id", Value: objectId},
+	}
+
+	database.OpenMongoDbConnection(database.CategoryTableName)
+	defer database.CloseMongoDbConnection()
+
+	targetEntity := convertBsonM2CategoryEntity(database.GetOneInMongoDB(filter))
 	if targetEntity.IsEmpty() {
 		util.Logger.Infoln("category is not exist")
 		return model.CategoryEntity{}
@@ -154,21 +148,20 @@ func (CategoryMongoDbMapper) DeleteCategoryByObjectId(plainId string) model.Cate
 		return model.CategoryEntity{}
 	}
 
-	var rowsAffected = database.DeleteManyInMongoDB(filter)
+	rowsAffected := database.DeleteManyInMongoDB(filter)
 	if rowsAffected != 1 {
 		// fixme: maybe we should have a rollback here.
 		util.Logger.Errorw("delete failed", "rows_affected", rowsAffected)
 		return model.CategoryEntity{}
 	}
-	
+
 	// Invalidate cache on delete
 	cache.GetCategoryCache().Clear()
-	
+
 	return targetEntity
 }
 
 func convertCategoryEntity2BsonD(entity model.CategoryEntity) bson.D {
-
 	// 为空时自动生成新Id
 	if entity.Id == primitive.NilObjectID {
 		entity.Id = primitive.NewObjectID()
@@ -185,7 +178,6 @@ func convertCategoryEntity2BsonD(entity model.CategoryEntity) bson.D {
 }
 
 func convertBsonM2CategoryEntity(bsonM bson.M) model.CategoryEntity {
-
 	var newEntity model.CategoryEntity
 	bsonBytes, _ := bson.Marshal(bsonM)
 	err := bson.Unmarshal(bsonBytes, &newEntity)

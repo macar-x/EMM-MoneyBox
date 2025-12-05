@@ -14,7 +14,7 @@ func ToInteger(origin string) int {
 }
 
 func BatchSurroundingWithSingleQuotes(originList []string) []string {
-	var targetList = make([]string, len(originList))
+	targetList := make([]string, len(originList))
 	for _, origin := range originList {
 		targetList = append(targetList, SurroundingWithSingleQuotes(origin))
 	}
@@ -26,8 +26,7 @@ func SurroundingWithSingleQuotes(origin string) string {
 }
 
 func CombiningWithComma(originList []string) string {
-
-	var targetString = bytes.Buffer{}
+	targetString := bytes.Buffer{}
 	for _, origin := range originList {
 		targetString.WriteString(origin)
 		targetString.WriteString(", ")

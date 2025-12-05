@@ -12,7 +12,6 @@ var incomeCmd = &cobra.Command{
 	Use:   "income",
 	Short: "add new income cash_flow",
 	RunE: func(cmd *cobra.Command, args []string) error {
-
 		if !cash_flow_service.IsIncomeRequiredFiledSatisfied(categoryName, amount) {
 			return errors.New("some required fields are empty")
 		}

@@ -35,12 +35,12 @@ func TestConnection() (*ConnectionInfo, error) {
 				info.Host = hostPart
 			}
 		}
-		
+
 		// Test connection by opening and closing
 		database.OpenMongoDbConnection(database.CashFlowTableName)
 		database.CloseMongoDbConnection()
 		info.Status = "connected"
-		
+
 	case "mysql":
 		uri := util.GetConfigByKey("mysql.uri")
 		// Extract host from MySQL URI (simplified)
@@ -51,7 +51,7 @@ func TestConnection() (*ConnectionInfo, error) {
 				info.Host = hostPart
 			}
 		}
-		
+
 		// Test connection by getting connection and closing
 		_ = database.GetMySqlConnection()
 		database.CloseMySqlConnection()

@@ -13,7 +13,6 @@ import (
 )
 
 func SaveOutcome(belongsDate, categoryName string, amount float64, description string) (model.CashFlowEntity, error) {
-
 	// Validate inputs
 	if err := validation.ValidateCategoryName(categoryName); err != nil {
 		return model.CashFlowEntity{}, err
@@ -59,12 +58,11 @@ func SaveOutcome(belongsDate, categoryName string, amount float64, description s
 		return model.CashFlowEntity{}, errors.New("cash_flow create failed")
 	}
 
-	var newCashFlow = cash_flow_mapper.INSTANCE.GetCashFlowByObjectId(newCashFlowId)
+	newCashFlow := cash_flow_mapper.INSTANCE.GetCashFlowByObjectId(newCashFlowId)
 	return newCashFlow, nil
 }
 
 func IsOutcomeRequiredFiledSatisfied(categoryName string, amount float64) bool {
-
 	if categoryName == "" {
 		return false
 	}
