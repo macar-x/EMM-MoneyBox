@@ -1,7 +1,7 @@
 package main
 
 import (
-	"github.com/emmettwoo/EMM-MoneyBox/cmd"
+	"github.com/macar-x/cashlens/cmd"
 )
 
 func main() {

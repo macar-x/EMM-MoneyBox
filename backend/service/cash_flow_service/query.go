@@ -5,9 +5,9 @@ import (
 	"reflect"
 	"time"
 
-	"github.com/emmettwoo/EMM-MoneyBox/mapper/cash_flow_mapper"
-	"github.com/emmettwoo/EMM-MoneyBox/model"
-	"github.com/emmettwoo/EMM-MoneyBox/util"
+	"github.com/macar-x/cashlens/mapper/cash_flow_mapper"
+	"github.com/macar-x/cashlens/model"
+	"github.com/macar-x/cashlens/util"
 )
 
 func IsQueryFieldsConflicted(plainId, belongsDate, exactDescription, fuzzyDescription string) bool {

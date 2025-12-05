@@ -1,4 +1,4 @@
-module github.com/emmettwoo/EMM-MoneyBox
+module github.com/macar-x/cashlens
 
 go 1.16
 

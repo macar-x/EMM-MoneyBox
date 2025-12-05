@@ -3,8 +3,8 @@ package cash_flow_mapper
 import (
 	"time"
 
-	"github.com/emmettwoo/EMM-MoneyBox/model"
-	"github.com/emmettwoo/EMM-MoneyBox/util"
+	"github.com/macar-x/cashlens/model"
+	"github.com/macar-x/cashlens/util"
 )
 
 var INSTANCE CashFlowMapper

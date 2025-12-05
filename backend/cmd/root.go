@@ -3,10 +3,10 @@ package cmd
 import (
 	"fmt"
 
-	"github.com/emmettwoo/EMM-MoneyBox/cmd/cash_flow_cmd"
-	"github.com/emmettwoo/EMM-MoneyBox/cmd/category_cmd"
-	"github.com/emmettwoo/EMM-MoneyBox/cmd/manage_cmd"
-	"github.com/emmettwoo/EMM-MoneyBox/cmd/server_cmd"
+	"github.com/macar-x/cashlens/cmd/cash_flow_cmd"
+	"github.com/macar-x/cashlens/cmd/category_cmd"
+	"github.com/macar-x/cashlens/cmd/manage_cmd"
+	"github.com/macar-x/cashlens/cmd/server_cmd"
 	"github.com/spf13/cobra"
 )
 

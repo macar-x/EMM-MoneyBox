@@ -4,9 +4,9 @@ import (
 	"errors"
 	"fmt"
 
-	"github.com/emmettwoo/EMM-MoneyBox/mapper/category_mapper"
-	"github.com/emmettwoo/EMM-MoneyBox/model"
-	"github.com/emmettwoo/EMM-MoneyBox/util"
+	"github.com/macar-x/cashlens/mapper/category_mapper"
+	"github.com/macar-x/cashlens/model"
+	"github.com/macar-x/cashlens/util"
 	"go.mongodb.org/mongo-driver/bson/primitive"
 )
 

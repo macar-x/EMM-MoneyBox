@@ -4,8 +4,8 @@ import (
 	"errors"
 	"fmt"
 
-	"github.com/emmettwoo/EMM-MoneyBox/mapper/cash_flow_mapper"
-	"github.com/emmettwoo/EMM-MoneyBox/mapper/category_mapper"
+	"github.com/macar-x/cashlens/mapper/cash_flow_mapper"
+	"github.com/macar-x/cashlens/mapper/category_mapper"
 )
 
 func DeleteService(plainId, categoryName string) error {

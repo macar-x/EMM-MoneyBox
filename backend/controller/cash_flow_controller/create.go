@@ -4,9 +4,9 @@ import (
 	"errors"
 	"net/http"
 
-	"github.com/emmettwoo/EMM-MoneyBox/model"
-	"github.com/emmettwoo/EMM-MoneyBox/service/cash_flow_service"
-	"github.com/emmettwoo/EMM-MoneyBox/util"
+	"github.com/macar-x/cashlens/model"
+	"github.com/macar-x/cashlens/service/cash_flow_service"
+	"github.com/macar-x/cashlens/util"
 )
 
 func CreateOutcome(w http.ResponseWriter, r *http.Request) {

@@ -3,8 +3,8 @@ package cash_flow_controller
 import (
 	"net/http"
 
-	"github.com/emmettwoo/EMM-MoneyBox/service/cash_flow_service"
-	"github.com/emmettwoo/EMM-MoneyBox/util"
+	"github.com/macar-x/cashlens/service/cash_flow_service"
+	"github.com/macar-x/cashlens/util"
 	"github.com/gorilla/mux"
 )
 

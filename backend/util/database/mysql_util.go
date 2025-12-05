@@ -6,7 +6,7 @@ import (
 	"reflect"
 	"time"
 
-	"github.com/emmettwoo/EMM-MoneyBox/util"
+	"github.com/macar-x/cashlens/util"
 
 	_ "github.com/go-sql-driver/mysql"
 )

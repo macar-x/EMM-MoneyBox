@@ -5,8 +5,8 @@ import (
 	"fmt"
 	"net/http"
 
-	"github.com/emmettwoo/EMM-MoneyBox/controller/cash_flow_controller"
-	"github.com/emmettwoo/EMM-MoneyBox/middleware"
+	"github.com/macar-x/cashlens/controller/cash_flow_controller"
+	"github.com/macar-x/cashlens/middleware"
 	"github.com/gorilla/mux"
 )
 

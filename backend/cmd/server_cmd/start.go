@@ -1,7 +1,7 @@
 package server_cmd
 
 import (
-	"github.com/emmettwoo/EMM-MoneyBox/controller"
+	"github.com/macar-x/cashlens/controller"
 	"github.com/spf13/cobra"
 )
 

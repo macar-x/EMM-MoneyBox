@@ -1,8 +1,8 @@
 package category_mapper
 
 import (
-	"github.com/emmettwoo/EMM-MoneyBox/model"
-	"github.com/emmettwoo/EMM-MoneyBox/util"
+	"github.com/macar-x/cashlens/model"
+	"github.com/macar-x/cashlens/util"
 )
 
 var INSTANCE CategoryMapper

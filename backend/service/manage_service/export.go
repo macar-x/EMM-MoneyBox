@@ -6,9 +6,9 @@ import (
 	"strings"
 	"time"
 
-	"github.com/emmettwoo/EMM-MoneyBox/mapper/cash_flow_mapper"
-	"github.com/emmettwoo/EMM-MoneyBox/mapper/category_mapper"
-	"github.com/emmettwoo/EMM-MoneyBox/util"
+	"github.com/macar-x/cashlens/mapper/cash_flow_mapper"
+	"github.com/macar-x/cashlens/mapper/category_mapper"
+	"github.com/macar-x/cashlens/util"
 	"github.com/xuri/excelize/v2"
 )
 

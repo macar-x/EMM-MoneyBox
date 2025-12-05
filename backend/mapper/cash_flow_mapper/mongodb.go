@@ -3,9 +3,9 @@ package cash_flow_mapper
 import (
 	"time"
 
-	"github.com/emmettwoo/EMM-MoneyBox/model"
-	"github.com/emmettwoo/EMM-MoneyBox/util"
-	"github.com/emmettwoo/EMM-MoneyBox/util/database"
+	"github.com/macar-x/cashlens/model"
+	"github.com/macar-x/cashlens/util"
+	"github.com/macar-x/cashlens/util/database"
 	"go.mongodb.org/mongo-driver/bson"
 	"go.mongodb.org/mongo-driver/bson/primitive"
 )
