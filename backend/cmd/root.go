@@ -8,6 +8,8 @@ import (
 	"github.com/macar-x/cashlens/cmd/db_cmd"
 	"github.com/macar-x/cashlens/cmd/manage_cmd"
 	"github.com/macar-x/cashlens/cmd/server_cmd"
+	"github.com/macar-x/cashlens/util"
+	"github.com/macar-x/cashlens/util/database"
 	"github.com/spf13/cobra"
 )
 
@@ -18,6 +20,15 @@ var rootCmd = &cobra.Command{
 	
 Track your daily cash flow, manage categories, and gain insights into your spending habits.
 Use 'cashlens [command] --help' for more information about a command.`,
+	PersistentPreRun: func(cmd *cobra.Command, args []string) {
+		// Initialize database connection pool
+		dbType := util.GetConfigByKey("db.type")
+		if dbType == "mongodb" {
+			if err := database.InitMongoDbConnection(); err != nil {
+				util.Logger.Errorw("Failed to initialize MongoDB connection", "error", err)
+			}
+		}
+	},
 	Run: func(cmd *cobra.Command, args []string) {
 		fmt.Println("Cashlens - See your money clearly")
 		fmt.Println("Use 'cashlens --help' for available commands")
