@@ -71,13 +71,20 @@
 - ✅ Setup state management (Riverpod)
 - ✅ Configure routing (go_router)
 - ✅ Setup theme (Material 3, dark mode)
+- ✅ Landing page with welcome screen
+- ✅ Dashboard with demo data and statistics
+- ✅ Currency settings with localStorage
+- ✅ Drawer navigation menu
+- ✅ Settings dialog with logout
+- ✅ Platform configurations (Android, iOS, Windows, Linux, macOS, Web)
 
 ### Core Features
 
 #### 1. Dashboard/Home Screen
-- [ ] Display current month summary (income, expense, balance)
-- [ ] Show recent transactions list
-- [ ] Quick action buttons (add income/expense)
+- ✅ Display current month summary (income, expense, balance)
+- ✅ Show recent transactions list
+- ✅ Quick action buttons (add income/expense)
+- ✅ Category breakdown (top 5 spending)
 - [ ] Category breakdown chart (pie/donut)
 - [ ] Spending trend chart (line/bar)
 
@@ -124,9 +131,10 @@
 - [ ] Database selection (MongoDB/MySQL)
 - [ ] Connection settings
 - [ ] Theme toggle (light/dark)
-- [ ] Currency selection
+- ✅ Currency selection (15 currencies with localStorage)
 - [ ] Date format preference
-- [ ] About screen
+- ✅ About screen
+- ✅ Logout functionality
 
 #### 6. Data Management
 - [ ] Import from Excel
