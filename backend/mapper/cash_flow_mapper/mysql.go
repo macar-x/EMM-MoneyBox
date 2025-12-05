@@ -82,6 +82,30 @@ func (CashFlowMySqlMapper) GetCashFlowsByBelongsDate(belongsDate time.Time) []mo
 	return targetEntityList
 }
 
+func (CashFlowMySqlMapper) GetCashFlowsByDateRange(from, to time.Time) []model.CashFlowEntity {
+
+	var sqlString bytes.Buffer
+	sqlString.WriteString("SELECT ID, CATEGORY_ID, BELONGS_DATE, FLOW_TYPE, AMOUNT, DESCRIPTION FROM ")
+	sqlString.WriteString(database.CashFlowTableName)
+	sqlString.WriteString(" WHERE BELONGS_DATE BETWEEN ? AND ? ")
+
+	connection := database.GetMySqlConnection()
+	defer database.CloseMySqlConnection()
+
+	rows, err := connection.Query(sqlString.String(), 
+		util.FormatDateToStringWithDash(from), 
+		util.FormatDateToStringWithDash(to))
+	if err != nil {
+		util.Logger.Errorw("query failed", "error", err)
+	}
+
+	var targetEntityList []model.CashFlowEntity
+	for rows.Next() {
+		targetEntityList = append(targetEntityList, convertRow2CashFlowEntity(rows))
+	}
+	return targetEntityList
+}
+
 func (CashFlowMySqlMapper) GetCashFlowsByCategoryId(categoryPlainId string) []model.CashFlowEntity {
 
 	var sqlString bytes.Buffer

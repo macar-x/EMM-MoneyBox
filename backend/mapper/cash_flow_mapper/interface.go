@@ -13,6 +13,7 @@ type CashFlowMapper interface {
 	GetCashFlowByObjectId(plainId string) model.CashFlowEntity
 	GetCashFlowsByObjectIdArray(plainIdList []string) []model.CashFlowEntity
 	GetCashFlowsByBelongsDate(belongsDate time.Time) []model.CashFlowEntity
+	GetCashFlowsByDateRange(from, to time.Time) []model.CashFlowEntity
 	GetCashFlowsByCategoryId(categoryPlainId string) []model.CashFlowEntity
 	GetCashFlowsByExactDesc(description string) []model.CashFlowEntity
 	GetCashFlowsByFuzzyDesc(description string) []model.CashFlowEntity

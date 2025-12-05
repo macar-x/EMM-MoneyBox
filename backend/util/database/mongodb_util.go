@@ -148,3 +148,9 @@ func DeleteManyInMongoDB(filter bson.D) int64 {
 
 	return result.DeletedCount
 }
+
+// GetMongoDbCollection returns the current MongoDB collection for advanced operations
+func GetMongoDbCollection() *mongo.Collection {
+	checkDbConnection()
+	return collection
+}

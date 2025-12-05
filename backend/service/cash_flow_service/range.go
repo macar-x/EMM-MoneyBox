@@ -1,42 +1,31 @@
 package cash_flow_service
 
 import (
-	"errors"
-
 	"github.com/macar-x/cashlens/mapper/cash_flow_mapper"
 	"github.com/macar-x/cashlens/model"
 	"github.com/macar-x/cashlens/util"
+	"github.com/macar-x/cashlens/validation"
 )
 
 // QueryByDateRange queries cash flows within a date range
 func QueryByDateRange(fromDate, toDate string) ([]*model.CashFlowEntity, error) {
-	if fromDate == "" || toDate == "" {
-		return nil, errors.New("both from and to dates are required")
+	// Validate date range
+	if err := validation.ValidateDateRange(fromDate, toDate); err != nil {
+		return nil, err
 	}
 
 	// Parse dates
 	from := util.FormatDateFromStringWithoutDash(fromDate)
 	to := util.FormatDateFromStringWithoutDash(toDate)
 
-	if from.IsZero() || to.IsZero() {
-		return nil, errors.New("invalid date format, use YYYY-MM-DD or YYYYMMDD")
+	// Single query for entire date range
+	results := cash_flow_mapper.INSTANCE.GetCashFlowsByDateRange(from, to)
+
+	// Convert to pointer slice
+	var resultPtrs []*model.CashFlowEntity
+	for i := range results {
+		resultPtrs = append(resultPtrs, &results[i])
 	}
 
-	if from.After(to) {
-		return nil, errors.New("from date must be before or equal to to date")
-	}
-
-	// Query all dates in range
-	var results []*model.CashFlowEntity
-	currentDate := from
-
-	for !currentDate.After(to) {
-		dayResults := cash_flow_mapper.INSTANCE.GetCashFlowsByBelongsDate(currentDate)
-		for i := range dayResults {
-			results = append(results, &dayResults[i])
-		}
-		currentDate = currentDate.AddDate(0, 0, 1)
-	}
-
-	return results, nil
+	return resultPtrs, nil
 }

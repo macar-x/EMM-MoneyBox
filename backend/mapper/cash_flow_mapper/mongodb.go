@@ -73,6 +73,26 @@ func (CashFlowMongoDbMapper) GetCashFlowsByBelongsDate(belongsDate time.Time) []
 	return targetEntityList
 }
 
+func (CashFlowMongoDbMapper) GetCashFlowsByDateRange(from, to time.Time) []model.CashFlowEntity {
+
+	filter := bson.D{
+		primitive.E{Key: "belongs_date", Value: bson.M{
+			"$gte": from,
+			"$lte": to,
+		}},
+	}
+
+	database.OpenMongoDbConnection(database.CashFlowTableName)
+	defer database.CloseMongoDbConnection()
+
+	var targetEntityList []model.CashFlowEntity
+	queryResultList := database.GetManyInMongoDB(filter)
+	for _, queryResult := range queryResultList {
+		targetEntityList = append(targetEntityList, convertBsonM2CashFlowEntity(queryResult))
+	}
+	return targetEntityList
+}
+
 func (CashFlowMongoDbMapper) GetCashFlowsByCategoryId(categoryPlainId string) []model.CashFlowEntity {
 
 	categoryObjectId := util.Convert2ObjectId(categoryPlainId)
