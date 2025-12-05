@@ -1,0 +1,84 @@
+version: '3.8'
+
+services:
+  # MongoDB Database
+  mongodb:
+    image: mongo:7.0
+    container_name: cashlens-mongodb
+    restart: unless-stopped
+    ports:
+      - "27017:27017"
+    environment:
+      MONGO_INITDB_ROOT_USERNAME: cashlens
+      MONGO_INITDB_ROOT_PASSWORD: cashlens123
+      MONGO_INITDB_DATABASE: cashlens
+    volumes:
+      - mongodb_data:/data/db
+      - ./docker/mongodb/init-mongo.js:/docker-entrypoint-initdb.d/init-mongo.js:ro
+    networks:
+      - cashlens-network
+    healthcheck:
+      test: echo 'db.runCommand("ping").ok' | mongosh localhost:27017/cashlens --quiet
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+  # MySQL Database (Alternative)
+  mysql:
+    image: mysql:8.0
+    container_name: cashlens-mysql
+    restart: unless-stopped
+    ports:
+      - "3306:3306"
+    environment:
+      MYSQL_ROOT_PASSWORD: cashlens123
+      MYSQL_DATABASE: cashlens
+      MYSQL_USER: cashlens
+      MYSQL_PASSWORD: cashlens123
+    volumes:
+      - mysql_data:/var/lib/mysql
+      - ./docker/mysql/init-mysql.sql:/docker-entrypoint-initdb.d/init-mysql.sql:ro
+    networks:
+      - cashlens-network
+    healthcheck:
+      test: ["CMD", "mysqladmin", "ping", "-h", "localhost", "-u", "root", "-pcashlens123"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+    profiles:
+      - mysql  # Only start if explicitly requested
+
+  # Backend API
+  backend:
+    build:
+      context: ./backend
+      dockerfile: Dockerfile
+    container_name: cashlens-backend
+    restart: unless-stopped
+    ports:
+      - "8080:8080"
+    environment:
+      DB_TYPE: mongodb
+      MONGO_DB_URI: mongodb://cashlens:cashlens123@mongodb:27017/cashlens?authSource=admin
+      DB_NAME: cashlens
+      LOG_FILE: /app/logs/cashlens.log
+      SERVER_PORT: 8080
+    volumes:
+      - ./backend/logs:/app/logs
+    depends_on:
+      mongodb:
+        condition: service_healthy
+    networks:
+      - cashlens-network
+    profiles:
+      - backend  # Only start if explicitly requested
+
+volumes:
+  mongodb_data:
+    driver: local
+  mysql_data:
+    driver: local
+
+networks:
+  cashlens-network:
+    driver: bridge
