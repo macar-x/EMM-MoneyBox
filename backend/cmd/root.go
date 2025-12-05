@@ -2,6 +2,9 @@ package cmd
 
 import (
 	"fmt"
+	"os"
+	"os/signal"
+	"syscall"
 
 	"github.com/macar-x/cashlens/cmd/cash_flow_cmd"
 	"github.com/macar-x/cashlens/cmd/category_cmd"
@@ -36,7 +39,29 @@ Use 'cashlens [command] --help' for more information about a command.`,
 }
 
 func Execute() {
+	// Setup graceful shutdown
+	setupGracefulShutdown()
+	
 	cobra.CheckErr(rootCmd.Execute())
+}
+
+func setupGracefulShutdown() {
+	sigChan := make(chan os.Signal, 1)
+	signal.Notify(sigChan, os.Interrupt, syscall.SIGTERM)
+	
+	go func() {
+		<-sigChan
+		util.Logger.Info("Shutdown signal received, cleaning up...")
+		
+		// Close database connections
+		dbType := util.GetConfigByKey("db.type")
+		if dbType == "mongodb" {
+			database.ShutdownMongoDbConnection()
+		}
+		
+		util.Logger.Info("Cleanup complete, exiting")
+		os.Exit(0)
+	}()
 }
 
 func init() {

@@ -1,6 +1,7 @@
 package cash_flow_mapper
 
 import (
+	"context"
 	"time"
 
 	"github.com/macar-x/cashlens/model"
@@ -188,6 +189,36 @@ func (CashFlowMongoDbMapper) InsertCashFlowByEntity(newEntity model.CashFlowEnti
 
 	newCashFlowId := database.InsertOneInMongoDB(convertCashFlowEntity2BsonD(newEntity))
 	return newCashFlowId.Hex()
+}
+
+func (CashFlowMongoDbMapper) BulkInsertCashFlows(entities []model.CashFlowEntity) ([]string, error) {
+	if len(entities) == 0 {
+		return []string{}, nil
+	}
+
+	var operatingTime = time.Now()
+	documents := make([]interface{}, len(entities))
+	
+	for i, entity := range entities {
+		entity.CreateTime = operatingTime
+		entity.ModifyTime = operatingTime
+		documents[i] = convertCashFlowEntity2BsonD(entity)
+	}
+
+	collection := database.GetMongoCollection(database.CashFlowTableName)
+	result, err := collection.InsertMany(context.TODO(), documents)
+	if err != nil {
+		util.Logger.Errorw("bulk insert failed", "error", err)
+		return nil, err
+	}
+
+	ids := make([]string, len(result.InsertedIDs))
+	for i, id := range result.InsertedIDs {
+		ids[i] = id.(primitive.ObjectID).Hex()
+	}
+
+	util.Logger.Infow("bulk insert successful", "count", len(ids))
+	return ids, nil
 }
 
 func (CashFlowMongoDbMapper) UpdateCashFlowByEntity(plainId string) model.CashFlowEntity {

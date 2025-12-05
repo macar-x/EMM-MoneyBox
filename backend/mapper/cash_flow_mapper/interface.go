@@ -19,6 +19,7 @@ type CashFlowMapper interface {
 	GetCashFlowsByFuzzyDesc(description string) []model.CashFlowEntity
 	CountCashFLowsByCategoryId(categoryPlainId string) int64
 	InsertCashFlowByEntity(newEntity model.CashFlowEntity) string
+	BulkInsertCashFlows(entities []model.CashFlowEntity) ([]string, error)
 	UpdateCashFlowByEntity(plainId string) model.CashFlowEntity
 	DeleteCashFlowByObjectId(plainId string) model.CashFlowEntity
 	DeleteCashFlowByBelongsDate(belongsDate time.Time) []model.CashFlowEntity
