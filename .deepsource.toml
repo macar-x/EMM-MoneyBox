@@ -1,12 +1,14 @@
 version = 1
 
 [[analyzers]]
-name = "shell"
-enabled = true
+name = "docker"
 
 [[analyzers]]
 name = "go"
-enabled = true
 
-[analyzers.meta]
-import_root = "github.com/Emmettwoo/EMM-MoneyBox"
+  [analyzers.meta]
+  import_root = "github.com/macar-x/cashlens"
+  dependencies_vendored = true
+
+[[code_formatters]]
+name = "gofumpt"
