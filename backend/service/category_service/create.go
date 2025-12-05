@@ -7,13 +7,22 @@ import (
 	"github.com/macar-x/cashlens/mapper/category_mapper"
 	"github.com/macar-x/cashlens/model"
 	"github.com/macar-x/cashlens/util"
+	"github.com/macar-x/cashlens/validation"
 	"go.mongodb.org/mongo-driver/bson/primitive"
 )
 
 func CreateService(parentPlainId, categoryName string) error {
 
-	if !isCreateRequiredFiledSatisfied(categoryName) {
-		return errors.New("some required fields are empty")
+	// Validate category name
+	if err := validation.ValidateCategoryName(categoryName); err != nil {
+		return err
+	}
+
+	// Validate parent ID if provided
+	if parentPlainId != "" {
+		if err := validation.ValidateID(parentPlainId); err != nil {
+			return err
+		}
 	}
 
 	var categoryEntity = model.CategoryEntity{

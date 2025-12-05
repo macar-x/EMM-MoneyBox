@@ -8,13 +8,40 @@ import (
 	"github.com/macar-x/cashlens/mapper/category_mapper"
 	"github.com/macar-x/cashlens/model"
 	"github.com/macar-x/cashlens/util"
+	"github.com/macar-x/cashlens/validation"
 	"github.com/shopspring/decimal"
 )
 
 // UpdateById updates a cash flow record by ID
 func UpdateById(plainId, belongsDate, categoryName string, amount float64, description string) (model.CashFlowEntity, error) {
-	if plainId == "" {
-		return model.CashFlowEntity{}, errors.New("id cannot be empty")
+	// Validate ID
+	if err := validation.ValidateID(plainId); err != nil {
+		return model.CashFlowEntity{}, err
+	}
+
+	// Validate optional fields if provided
+	if belongsDate != "" {
+		if err := validation.ValidateDate(belongsDate); err != nil {
+			return model.CashFlowEntity{}, err
+		}
+	}
+
+	if categoryName != "" {
+		if err := validation.ValidateCategoryName(categoryName); err != nil {
+			return model.CashFlowEntity{}, err
+		}
+	}
+
+	if amount != 0 {
+		if err := validation.ValidateAmount(amount); err != nil {
+			return model.CashFlowEntity{}, err
+		}
+	}
+
+	if description != "" {
+		if err := validation.ValidateDescription(description); err != nil {
+			return model.CashFlowEntity{}, err
+		}
 	}
 
 	// Query existing record
