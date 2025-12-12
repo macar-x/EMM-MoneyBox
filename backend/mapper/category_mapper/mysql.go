@@ -15,7 +15,6 @@ import (
 type CategoryMySqlMapper struct{}
 
 func (CategoryMySqlMapper) GetCategoryByObjectId(plainId string) model.CategoryEntity {
-
 	var sqlString bytes.Buffer
 	sqlString.WriteString("SELECT ID, PARENT_ID, NAME FROM ")
 	sqlString.WriteString(database.CategoryTableName)
@@ -38,7 +37,6 @@ func (CategoryMySqlMapper) GetCategoryByObjectId(plainId string) model.CategoryE
 }
 
 func (CategoryMySqlMapper) GetCategoryByName(categoryName string) model.CategoryEntity {
-
 	// Check cache first
 	categoryCache := cache.GetCategoryCache()
 	if cached, ok := categoryCache.GetByName(categoryName); ok {
@@ -95,8 +93,7 @@ func (CategoryMySqlMapper) GetCategoryByParentId(parentPlainId string) []model.C
 }
 
 func (CategoryMySqlMapper) InsertCategoryByEntity(newEntity model.CategoryEntity) string {
-
-	var operatingTime = time.Now()
+	operatingTime := time.Now()
 	newEntity.CreateTime = operatingTime
 	newEntity.ModifyTime = operatingTime
 
@@ -118,7 +115,7 @@ func (CategoryMySqlMapper) InsertCategoryByEntity(newEntity model.CategoryEntity
 		util.Logger.Errorw("insert failed", "error", err)
 	}
 
-	var newPlainId = primitive.NewObjectID().Hex()
+	newPlainId := primitive.NewObjectID().Hex()
 	result, err := statement.Exec(newPlainId, newEntity.ParentId.Hex(), newEntity.Name,
 		newEntity.Remark, operatingTime, operatingTime)
 	if err != nil {
@@ -138,8 +135,7 @@ func (CategoryMySqlMapper) InsertCategoryByEntity(newEntity model.CategoryEntity
 }
 
 func (CategoryMySqlMapper) UpdateCategoryByEntity(plainId string, updatedEntity model.CategoryEntity) model.CategoryEntity {
-
-	var targetEntity = INSTANCE.GetCategoryByObjectId(plainId)
+	targetEntity := INSTANCE.GetCategoryByObjectId(plainId)
 	if targetEntity.IsEmpty() {
 		util.Logger.Infoln("category is not exist")
 		return model.CategoryEntity{}
@@ -186,8 +182,7 @@ func (CategoryMySqlMapper) UpdateCategoryByEntity(plainId string, updatedEntity 
 }
 
 func (CategoryMySqlMapper) DeleteCategoryByObjectId(plainId string) model.CategoryEntity {
-
-	var targetEntity = INSTANCE.GetCategoryByObjectId(plainId)
+	targetEntity := INSTANCE.GetCategoryByObjectId(plainId)
 	if targetEntity.IsEmpty() {
 		util.Logger.Infoln("category is not exist")
 		return model.CategoryEntity{}
@@ -230,7 +225,6 @@ func (CategoryMySqlMapper) DeleteCategoryByObjectId(plainId string) model.Catego
 }
 
 func (CategoryMySqlMapper) GetAllCategories(limit, offset int) []model.CategoryEntity {
-
 	var sqlString bytes.Buffer
 	sqlString.WriteString("SELECT ID, PARENT_ID, NAME FROM ")
 	sqlString.WriteString(database.CategoryTableName)
@@ -265,7 +259,6 @@ func (CategoryMySqlMapper) GetAllCategories(limit, offset int) []model.CategoryE
 }
 
 func (CategoryMySqlMapper) CountAllCategories() int64 {
-
 	var sqlString bytes.Buffer
 	sqlString.WriteString("SELECT COUNT(1) FROM ")
 	sqlString.WriteString(database.CategoryTableName)
@@ -289,7 +282,6 @@ func (CategoryMySqlMapper) CountAllCategories() int64 {
 }
 
 func convertRow2CategoryEntity(rows *sql.Rows) model.CategoryEntity {
-
 	var id string
 	var parentId string
 	var name string

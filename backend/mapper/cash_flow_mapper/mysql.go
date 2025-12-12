@@ -14,7 +14,6 @@ import (
 type CashFlowMySqlMapper struct{}
 
 func (CashFlowMySqlMapper) GetCashFlowByObjectId(plainId string) model.CashFlowEntity {
-
 	var sqlString bytes.Buffer
 	sqlString.WriteString("SELECT ID, CATEGORY_ID, BELONGS_DATE, FLOW_TYPE, AMOUNT, DESCRIPTION FROM ")
 	sqlString.WriteString(database.CashFlowTableName)
@@ -37,7 +36,6 @@ func (CashFlowMySqlMapper) GetCashFlowByObjectId(plainId string) model.CashFlowE
 }
 
 func (CashFlowMySqlMapper) GetCashFlowsByObjectIdArray(plainIdList []string) []model.CashFlowEntity {
-
 	var sqlString bytes.Buffer
 	sqlString.WriteString("SELECT ID, CATEGORY_ID, BELONGS_DATE, FLOW_TYPE, AMOUNT, DESCRIPTION FROM ")
 	sqlString.WriteString(database.CashFlowTableName)
@@ -53,7 +51,7 @@ func (CashFlowMySqlMapper) GetCashFlowsByObjectIdArray(plainIdList []string) []m
 		util.Logger.Errorw("query failed", "error", err)
 	}
 
-	var targetEntityList = make([]model.CashFlowEntity, len(plainIdList))
+	targetEntityList := make([]model.CashFlowEntity, len(plainIdList))
 	for rows.Next() {
 		targetEntityList = append(targetEntityList, convertRow2CashFlowEntity(rows))
 	}
@@ -61,7 +59,6 @@ func (CashFlowMySqlMapper) GetCashFlowsByObjectIdArray(plainIdList []string) []m
 }
 
 func (CashFlowMySqlMapper) GetCashFlowsByBelongsDate(belongsDate time.Time) []model.CashFlowEntity {
-
 	var sqlString bytes.Buffer
 	sqlString.WriteString("SELECT ID, CATEGORY_ID, BELONGS_DATE, FLOW_TYPE, AMOUNT, DESCRIPTION FROM ")
 	sqlString.WriteString(database.CashFlowTableName)
@@ -83,7 +80,6 @@ func (CashFlowMySqlMapper) GetCashFlowsByBelongsDate(belongsDate time.Time) []mo
 }
 
 func (CashFlowMySqlMapper) GetCashFlowsByDateRange(from, to time.Time) []model.CashFlowEntity {
-
 	var sqlString bytes.Buffer
 	sqlString.WriteString("SELECT ID, CATEGORY_ID, BELONGS_DATE, FLOW_TYPE, AMOUNT, DESCRIPTION FROM ")
 	sqlString.WriteString(database.CashFlowTableName)
@@ -92,8 +88,8 @@ func (CashFlowMySqlMapper) GetCashFlowsByDateRange(from, to time.Time) []model.C
 	connection := database.GetMySqlConnection()
 	defer database.CloseMySqlConnection()
 
-	rows, err := connection.Query(sqlString.String(), 
-		util.FormatDateToStringWithDash(from), 
+	rows, err := connection.Query(sqlString.String(),
+		util.FormatDateToStringWithDash(from),
 		util.FormatDateToStringWithDash(to))
 	if err != nil {
 		util.Logger.Errorw("query failed", "error", err)
@@ -107,7 +103,6 @@ func (CashFlowMySqlMapper) GetCashFlowsByDateRange(from, to time.Time) []model.C
 }
 
 func (CashFlowMySqlMapper) GetCashFlowsByCategoryId(categoryPlainId string) []model.CashFlowEntity {
-
 	var sqlString bytes.Buffer
 	sqlString.WriteString("SELECT ID, CATEGORY_ID, BELONGS_DATE, FLOW_TYPE, AMOUNT, DESCRIPTION FROM ")
 	sqlString.WriteString(database.CashFlowTableName)
@@ -129,7 +124,6 @@ func (CashFlowMySqlMapper) GetCashFlowsByCategoryId(categoryPlainId string) []mo
 }
 
 func (CashFlowMySqlMapper) GetCashFlowsByExactDesc(description string) []model.CashFlowEntity {
-
 	var sqlString bytes.Buffer
 	sqlString.WriteString("SELECT ID, CATEGORY_ID, BELONGS_DATE, FLOW_TYPE, AMOUNT, DESCRIPTION FROM ")
 	sqlString.WriteString(database.CashFlowTableName)
@@ -151,7 +145,6 @@ func (CashFlowMySqlMapper) GetCashFlowsByExactDesc(description string) []model.C
 }
 
 func (CashFlowMySqlMapper) GetCashFlowsByFuzzyDesc(description string) []model.CashFlowEntity {
-
 	var sqlString bytes.Buffer
 	sqlString.WriteString("SELECT ID, CATEGORY_ID, BELONGS_DATE, FLOW_TYPE, AMOUNT, DESCRIPTION FROM ")
 	sqlString.WriteString(database.CashFlowTableName)
@@ -173,7 +166,6 @@ func (CashFlowMySqlMapper) GetCashFlowsByFuzzyDesc(description string) []model.C
 }
 
 func (CashFlowMySqlMapper) CountCashFLowsByCategoryId(categoryPlainId string) int64 {
-
 	var sqlString bytes.Buffer
 	sqlString.WriteString("SELECT COUNT(1) FROM ")
 	sqlString.WriteString(database.CashFlowTableName)
@@ -197,8 +189,7 @@ func (CashFlowMySqlMapper) CountCashFLowsByCategoryId(categoryPlainId string) in
 }
 
 func (CashFlowMySqlMapper) InsertCashFlowByEntity(newEntity model.CashFlowEntity) string {
-
-	var operatingTime = time.Now()
+	operatingTime := time.Now()
 	newEntity.CreateTime = operatingTime
 	newEntity.ModifyTime = operatingTime
 
@@ -223,7 +214,7 @@ func (CashFlowMySqlMapper) InsertCashFlowByEntity(newEntity model.CashFlowEntity
 		util.Logger.Errorw("insert failed", "error", err)
 	}
 
-	var newPlainId = primitive.NewObjectID().Hex()
+	newPlainId := primitive.NewObjectID().Hex()
 	result, err := statement.Exec(newPlainId, newEntity.CategoryId.Hex(), newEntity.BelongsDate, newEntity.FlowType,
 		newEntity.Amount, newEntity.Description, newEntity.Remark, operatingTime, operatingTime)
 	if err != nil {
@@ -243,7 +234,7 @@ func (CashFlowMySqlMapper) BulkInsertCashFlows(entities []model.CashFlowEntity) 
 		return []string{}, nil
 	}
 
-	var operatingTime = time.Now()
+	operatingTime := time.Now()
 	var sqlString bytes.Buffer
 	sqlString.WriteString("INSERT INTO ")
 	sqlString.WriteString(database.CashFlowTableName)
@@ -257,7 +248,7 @@ func (CashFlowMySqlMapper) BulkInsertCashFlows(entities []model.CashFlowEntity) 
 			sqlString.WriteString(", ")
 		}
 		sqlString.WriteString("(?, ?, ?, ?, ?, ?, ?, ?, ?)")
-		
+
 		ids[i] = primitive.NewObjectID().Hex()
 		values = append(values, ids[i], entity.CategoryId.Hex(), entity.BelongsDate, entity.FlowType,
 			entity.Amount, entity.Description, entity.Remark, operatingTime, operatingTime)
@@ -288,14 +279,13 @@ func (CashFlowMySqlMapper) BulkInsertCashFlows(entities []model.CashFlowEntity) 
 }
 
 func (CashFlowMySqlMapper) UpdateCashFlowByEntity(plainId string, updatedEntity model.CashFlowEntity) model.CashFlowEntity {
-
-	var objectId = util.Convert2ObjectId(plainId)
+	objectId := util.Convert2ObjectId(plainId)
 	if plainId == "" || objectId == primitive.NilObjectID {
 		util.Logger.Warnln("cash_flow's id is not acceptable")
 		return model.CashFlowEntity{}
 	}
 
-	var targetEntity = INSTANCE.GetCashFlowByObjectId(plainId)
+	targetEntity := INSTANCE.GetCashFlowByObjectId(plainId)
 	if targetEntity.IsEmpty() {
 		util.Logger.Infoln("cash_flow is not exist")
 		return model.CashFlowEntity{}
@@ -341,8 +331,7 @@ func (CashFlowMySqlMapper) UpdateCashFlowByEntity(plainId string, updatedEntity 
 }
 
 func (CashFlowMySqlMapper) DeleteCashFlowByObjectId(plainId string) model.CashFlowEntity {
-
-	var targetEntity = INSTANCE.GetCashFlowByObjectId(plainId)
+	targetEntity := INSTANCE.GetCashFlowByObjectId(plainId)
 	if targetEntity.IsEmpty() {
 		util.Logger.Infoln("cash_flow is not exist")
 		return model.CashFlowEntity{}
@@ -375,8 +364,7 @@ func (CashFlowMySqlMapper) DeleteCashFlowByObjectId(plainId string) model.CashFl
 }
 
 func (CashFlowMySqlMapper) DeleteCashFlowByBelongsDate(belongsDate time.Time) []model.CashFlowEntity {
-
-	var cashFlowList = INSTANCE.GetCashFlowsByBelongsDate(belongsDate)
+	cashFlowList := INSTANCE.GetCashFlowsByBelongsDate(belongsDate)
 	if cashFlowList == nil {
 		util.Logger.Infoln("no cash_flow(s) found")
 		return cashFlowList
@@ -409,7 +397,6 @@ func (CashFlowMySqlMapper) DeleteCashFlowByBelongsDate(belongsDate time.Time) []
 }
 
 func (CashFlowMySqlMapper) GetAllCashFlows(limit, offset int) []model.CashFlowEntity {
-
 	var sqlString bytes.Buffer
 	sqlString.WriteString("SELECT ID, CATEGORY_ID, BELONGS_DATE, FLOW_TYPE, AMOUNT, DESCRIPTION FROM ")
 	sqlString.WriteString(database.CashFlowTableName)
@@ -444,7 +431,6 @@ func (CashFlowMySqlMapper) GetAllCashFlows(limit, offset int) []model.CashFlowEn
 }
 
 func (CashFlowMySqlMapper) CountAllCashFlows() int64 {
-
 	var sqlString bytes.Buffer
 	sqlString.WriteString("SELECT COUNT(1) FROM ")
 	sqlString.WriteString(database.CashFlowTableName)
@@ -468,7 +454,6 @@ func (CashFlowMySqlMapper) CountAllCashFlows() int64 {
 }
 
 func convertRow2CashFlowEntity(rows *sql.Rows) model.CashFlowEntity {
-
 	var id string
 	var categoryId string
 	var belongsDate string
