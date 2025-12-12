@@ -35,6 +35,6 @@ func RestoreBackup(filePath string) error {
 	// TODO: Implement actual data restoration when:
 	//   - ResetDatabase is implemented
 	//   - Bulk insert methods are available in mappers
-	
+
 	return errors.New("restore functionality requires mapper enhancement and ResetDatabase implementation")
 }

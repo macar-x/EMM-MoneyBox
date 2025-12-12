@@ -27,7 +27,6 @@ func (entity CashFlowEntity) IsEmpty() bool {
 }
 
 func (entity CashFlowEntity) ToString() string {
-
 	// todo: category query from cache like redis would be better.
 	return "[ " +
 		"Id: " + entity.Id.Hex() +
@@ -41,7 +40,7 @@ func (entity CashFlowEntity) ToString() string {
 }
 
 func (entity CashFlowEntity) Build(fieldMap map[string]string) CashFlowEntity {
-	var newEntity = entity
+	newEntity := entity
 	for key, value := range fieldMap {
 		switch key {
 		case "Id":

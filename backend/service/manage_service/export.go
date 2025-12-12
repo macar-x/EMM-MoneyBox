@@ -12,16 +12,17 @@ import (
 	"github.com/xuri/excelize/v2"
 )
 
-var defaultSheetName = "report"
-var defaultRowTitle = []string{"Id", "CategoryId", "CategoryName", "BelongsDate", "FlowType", "Amount", "Description"}
+var (
+	defaultSheetName = "report"
+	defaultRowTitle  = []string{"Id", "CategoryId", "CategoryName", "BelongsDate", "FlowType", "Amount", "Description"}
+)
 
 func ExportService(fromDateInString, toDateInString, filePath string) error {
-
 	if filePath == "" {
 		filePath = "./export.xlsx"
 	}
-	var fromDate = util.FormatDateFromStringWithoutDash(fromDateInString)
-	var toDate = util.FormatDateFromStringWithoutDash(toDateInString)
+	fromDate := util.FormatDateFromStringWithoutDash(fromDateInString)
+	toDate := util.FormatDateFromStringWithoutDash(toDateInString)
 	if err := isExportRequiredFiledSatisfied(fromDate, toDate, filePath); err != nil {
 		return err
 	}
@@ -33,7 +34,6 @@ func ExportService(fromDateInString, toDateInString, filePath string) error {
 }
 
 func isExportRequiredFiledSatisfied(fromDate, toDate time.Time, filePath string) error {
-
 	if util.IsDateTimeEmpty(fromDate) {
 		return errors.New("from_date could not be empty")
 	}
@@ -51,8 +51,7 @@ func isExportRequiredFiledSatisfied(fromDate, toDate time.Time, filePath string)
 }
 
 func createExcelFile() *excelize.File {
-
-	var file = excelize.NewFile()
+	file := excelize.NewFile()
 	// 創建一個工作表
 	index, _ := file.NewSheet(defaultSheetName)
 	// 設置活頁簿的默認工作表
@@ -67,7 +66,6 @@ func createExcelFile() *excelize.File {
 }
 
 func saveExcelFile(file *excelize.File, filePath string) {
-
 	// 根據指定路徑保存活頁簿
 	writeExcelRow(file, defaultSheetName, "A2", "Ended Time")
 	writeExcelRow(file, defaultSheetName, "B2", time.Now())
@@ -77,14 +75,13 @@ func saveExcelFile(file *excelize.File, filePath string) {
 }
 
 func exportData(file *excelize.File, fromDate, toDate string) {
+	cashFlowRowIndex := 1
 
-	var cashFlowRowIndex = 1
-
-	var queryDateCurrent = util.FormatDateFromStringWithoutDash(fromDate)
+	queryDateCurrent := util.FormatDateFromStringWithoutDash(fromDate)
 	// add one day for include the last day's data
-	var queryDateEnded = util.FormatDateFromStringWithoutDash(toDate).AddDate(0, 0, 1)
+	queryDateEnded := util.FormatDateFromStringWithoutDash(toDate).AddDate(0, 0, 1)
 
-	var currentYearAndMonth = "nil"
+	currentYearAndMonth := "nil"
 
 	for queryDateEnded.After(queryDateCurrent) {
 		cashFlowArray := cash_flow_mapper.INSTANCE.GetCashFlowsByBelongsDate(queryDateCurrent)
@@ -94,11 +91,11 @@ func exportData(file *excelize.File, fromDate, toDate string) {
 			continue
 		}
 
-		var queryDateCurrentInString = util.FormatDateToStringWithoutDash(queryDateCurrent)
+		queryDateCurrentInString := util.FormatDateToStringWithoutDash(queryDateCurrent)
 		util.Logger.Debugf("%s's flow is exporting.\n", queryDateCurrentInString)
 
 		// 年份有變化，則初始化新 Sheet
-		var newYearAndMonth = queryDateCurrentInString[0:6]
+		newYearAndMonth := queryDateCurrentInString[0:6]
 		if newYearAndMonth != currentYearAndMonth {
 			currentYearAndMonth = newYearAndMonth
 
@@ -117,7 +114,7 @@ func exportData(file *excelize.File, fromDate, toDate string) {
 
 		for _, cashFlow := range cashFlowArray {
 			cashFlowRowIndex++
-			var cashFlowIndexInString = strconv.Itoa(cashFlowRowIndex)
+			cashFlowIndexInString := strconv.Itoa(cashFlowRowIndex)
 			// refer to hardcode defaultRowTitle, bad idea.
 			writeExcelRow(file, currentYearAndMonth, "A"+cashFlowIndexInString, cashFlow.Id.Hex())
 			writeExcelRow(file, currentYearAndMonth, "B"+cashFlowIndexInString, cashFlow.CategoryId.Hex())

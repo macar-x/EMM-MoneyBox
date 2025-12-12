@@ -14,7 +14,6 @@ import (
 type CashFlowMongoDbMapper struct{}
 
 func (CashFlowMongoDbMapper) GetCashFlowByObjectId(plainId string) model.CashFlowEntity {
-
 	objectId := util.Convert2ObjectId(plainId)
 	if plainId == "" || objectId == primitive.NilObjectID {
 		util.Logger.Warnln("cash_flow's id is not acceptable")
@@ -31,8 +30,7 @@ func (CashFlowMongoDbMapper) GetCashFlowByObjectId(plainId string) model.CashFlo
 }
 
 func (CashFlowMongoDbMapper) GetCashFlowsByObjectIdArray(plainIdList []string) []model.CashFlowEntity {
-
-	var objectIdArray = make([]primitive.ObjectID, len(plainIdList))
+	objectIdArray := make([]primitive.ObjectID, len(plainIdList))
 	for _, plainId := range plainIdList {
 		objectId := util.Convert2ObjectId(plainId)
 		objectIdArray = append(objectIdArray, objectId)
@@ -56,7 +54,6 @@ func (CashFlowMongoDbMapper) GetCashFlowsByObjectIdArray(plainIdList []string) [
 }
 
 func (CashFlowMongoDbMapper) GetCashFlowsByBelongsDate(belongsDate time.Time) []model.CashFlowEntity {
-
 	filter := bson.D{
 		primitive.E{Key: "belongs_date", Value: belongsDate},
 	}
@@ -75,7 +72,6 @@ func (CashFlowMongoDbMapper) GetCashFlowsByBelongsDate(belongsDate time.Time) []
 }
 
 func (CashFlowMongoDbMapper) GetCashFlowsByDateRange(from, to time.Time) []model.CashFlowEntity {
-
 	filter := bson.D{
 		primitive.E{Key: "belongs_date", Value: bson.M{
 			"$gte": from,
@@ -95,7 +91,6 @@ func (CashFlowMongoDbMapper) GetCashFlowsByDateRange(from, to time.Time) []model
 }
 
 func (CashFlowMongoDbMapper) GetCashFlowsByCategoryId(categoryPlainId string) []model.CashFlowEntity {
-
 	categoryObjectId := util.Convert2ObjectId(categoryPlainId)
 	if categoryPlainId == "" || categoryObjectId == primitive.NilObjectID {
 		util.Logger.Warnln("category's id is not acceptable")
@@ -118,7 +113,6 @@ func (CashFlowMongoDbMapper) GetCashFlowsByCategoryId(categoryPlainId string) []
 }
 
 func (CashFlowMongoDbMapper) CountCashFLowsByCategoryId(categoryPlainId string) int64 {
-
 	categoryObjectId := util.Convert2ObjectId(categoryPlainId)
 	if categoryPlainId == "" || categoryObjectId == primitive.NilObjectID {
 		util.Logger.Warnln("category's id is not acceptable")
@@ -136,7 +130,6 @@ func (CashFlowMongoDbMapper) CountCashFLowsByCategoryId(categoryPlainId string) 
 }
 
 func (CashFlowMongoDbMapper) GetCashFlowsByExactDesc(description string) []model.CashFlowEntity {
-
 	filter := bson.D{
 		primitive.E{Key: "description", Value: description},
 	}
@@ -156,7 +149,6 @@ func (CashFlowMongoDbMapper) GetCashFlowsByExactDesc(description string) []model
 }
 
 func (CashFlowMongoDbMapper) GetCashFlowsByFuzzyDesc(description string) []model.CashFlowEntity {
-
 	// Options i for disable case sensitive.
 	filter := bson.D{
 		primitive.E{Key: "description", Value: primitive.Regex{
@@ -179,8 +171,7 @@ func (CashFlowMongoDbMapper) GetCashFlowsByFuzzyDesc(description string) []model
 }
 
 func (CashFlowMongoDbMapper) InsertCashFlowByEntity(newEntity model.CashFlowEntity) string {
-
-	var operatingTime = time.Now()
+	operatingTime := time.Now()
 	newEntity.CreateTime = operatingTime
 	newEntity.ModifyTime = operatingTime
 
@@ -196,9 +187,9 @@ func (CashFlowMongoDbMapper) BulkInsertCashFlows(entities []model.CashFlowEntity
 		return []string{}, nil
 	}
 
-	var operatingTime = time.Now()
+	operatingTime := time.Now()
 	documents := make([]interface{}, len(entities))
-	
+
 	for i, entity := range entities {
 		entity.CreateTime = operatingTime
 		entity.ModifyTime = operatingTime
@@ -222,7 +213,6 @@ func (CashFlowMongoDbMapper) BulkInsertCashFlows(entities []model.CashFlowEntity
 }
 
 func (CashFlowMongoDbMapper) UpdateCashFlowByEntity(plainId string, updatedEntity model.CashFlowEntity) model.CashFlowEntity {
-
 	var objectId = util.Convert2ObjectId(plainId)
 	if plainId == "" || objectId == primitive.NilObjectID {
 		util.Logger.Warnln("cash_flow's id is not acceptable")
@@ -258,7 +248,6 @@ func (CashFlowMongoDbMapper) UpdateCashFlowByEntity(plainId string, updatedEntit
 }
 
 func (CashFlowMongoDbMapper) DeleteCashFlowByObjectId(plainId string) model.CashFlowEntity {
-
 	objectId := util.Convert2ObjectId(plainId)
 	if plainId == "" || objectId == primitive.NilObjectID {
 		util.Logger.Warnln("cash_flow's id is not acceptable")
@@ -271,12 +260,12 @@ func (CashFlowMongoDbMapper) DeleteCashFlowByObjectId(plainId string) model.Cash
 
 	database.OpenMongoDbConnection(database.CashFlowTableName)
 	defer database.CloseMongoDbConnection()
-	var targetEntity = convertBsonM2CashFlowEntity(database.GetOneInMongoDB(filter))
+	targetEntity := convertBsonM2CashFlowEntity(database.GetOneInMongoDB(filter))
 	if targetEntity.IsEmpty() {
 		util.Logger.Infoln("cash_flow is not exist")
 		return model.CashFlowEntity{}
 	}
-	var rowsAffected = database.DeleteManyInMongoDB(filter)
+	rowsAffected := database.DeleteManyInMongoDB(filter)
 	if rowsAffected != 1 {
 		// fixme: maybe we should have a rollback here.
 		util.Logger.Errorw("delete failed", "rows_affected", rowsAffected)
@@ -286,12 +275,11 @@ func (CashFlowMongoDbMapper) DeleteCashFlowByObjectId(plainId string) model.Cash
 }
 
 func (CashFlowMongoDbMapper) DeleteCashFlowByBelongsDate(belongsDate time.Time) []model.CashFlowEntity {
-
 	filter := bson.D{
 		primitive.E{Key: "belongs_date", Value: belongsDate},
 	}
 
-	var cashFlowList = INSTANCE.GetCashFlowsByBelongsDate(belongsDate)
+	cashFlowList := INSTANCE.GetCashFlowsByBelongsDate(belongsDate)
 	if cashFlowList == nil {
 		util.Logger.Infoln("no cash_flow(s) found")
 		return []model.CashFlowEntity{}
@@ -300,7 +288,7 @@ func (CashFlowMongoDbMapper) DeleteCashFlowByBelongsDate(belongsDate time.Time) 
 	database.OpenMongoDbConnection(database.CashFlowTableName)
 	defer database.CloseMongoDbConnection()
 
-	var rowsAffected = database.DeleteManyInMongoDB(filter)
+	rowsAffected := database.DeleteManyInMongoDB(filter)
 	if rowsAffected != int64(len(cashFlowList)) {
 		// fixme: maybe we should have a rollback here.
 		util.Logger.Errorw("delete failed", "rows_affected", rowsAffected)
@@ -360,7 +348,6 @@ func (CashFlowMongoDbMapper) CountAllCashFlows() int64 {
 }
 
 func convertCashFlowEntity2BsonD(entity model.CashFlowEntity) bson.D {
-
 	// 为空时自动生成新Id
 	if entity.Id == primitive.NilObjectID {
 		entity.Id = primitive.NewObjectID()
@@ -380,7 +367,6 @@ func convertCashFlowEntity2BsonD(entity model.CashFlowEntity) bson.D {
 }
 
 func convertBsonM2CashFlowEntity(bsonM bson.M) model.CashFlowEntity {
-
 	var newEntity model.CashFlowEntity
 	bsonBytes, err := bson.Marshal(bsonM)
 	if err != nil {

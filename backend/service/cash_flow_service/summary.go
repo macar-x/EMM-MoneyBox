@@ -72,10 +72,10 @@ func GetSummary(period, date string) (*Summary, error) {
 	currentDate := fromDate
 	for !currentDate.After(toDate) {
 		dayResults := cash_flow_mapper.INSTANCE.GetCashFlowsByBelongsDate(currentDate)
-		
+
 		for _, cashFlow := range dayResults {
 			summary.TransactionCount++
-			
+
 			if cashFlow.FlowType == model.FlowTypeIncome {
 				summary.TotalIncome += cashFlow.Amount
 			} else {
@@ -88,7 +88,7 @@ func GetSummary(period, date string) (*Summary, error) {
 				summary.CategoryBreakdown[category.Name] += cashFlow.Amount
 			}
 		}
-		
+
 		currentDate = currentDate.AddDate(0, 0, 1)
 	}
 

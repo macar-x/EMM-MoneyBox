@@ -2,132 +2,194 @@
 
 **See your money clearly**
 
-A personal finance management tool for recording daily cash flow with both CLI and REST API interfaces.
+A personal finance management tool for tracking daily cash flow with CLI, REST API, and cross-platform UI.
+
+## Overview
+
+Cashlens helps you manage personal finances by recording income and expenses, categorizing transactions, and generating summaries. Built with Go backend and Flutter frontend, it supports both MongoDB and MySQL databases.
+
+**Key Features**:
+- 💰 Track income and expenses
+- 📊 Category-based organization
+- 📅 Date range queries and summaries
+- 📤 Excel import/export
+- 🗄️ Multi-database support (MongoDB/MySQL)
+- 🚀 High performance (825x faster after optimization)
+- 🖥️ Cross-platform UI (Web, Android, iOS, Windows, Linux, macOS)
 
 ## Project Structure
 
-This is a monorepo containing:
-- **`backend/`** - Go/Cobra CLI and REST API server
-- **`flutter/`** - Flutter cross-platform UI
+```
+cashlens/
+├── backend/          # Go CLI and REST API
+├── flutter/          # Flutter cross-platform UI
+├── docs/             # Project documentation
+├── docker/           # Docker configurations
+└── session.md        # Ona collaboration notes (gitignored)
+```
 
-## Backend
+## Quick Start
 
-### Prerequisites
-- Go 1.21+
-- MongoDB or MySQL database
+### 1. Setup Database
 
-### Configuration
+Start MongoDB with Docker:
+```bash
+docker-compose up -d mongodb
+```
 
-1. Copy the environment template:
+Or use MySQL:
+```bash
+docker-compose --profile mysql up -d mysql
+```
+
+See [docs/DOCKER.md](docs/DOCKER.md) for detailed setup and demo data.
+
+### 2. Configure Environment
+
 ```bash
 cp .env.sample .env
-```
-
-2. Edit `.env` with your database credentials:
-```bash
-# For MongoDB
-DB_TYPE=mongodb
-MONGO_DB_URI=mongodb+srv://username:password@cluster.mongodb.net/cashlens
-
-# For MySQL
-DB_TYPE=mysql
-MYSQL_DB_URI=username:password@tcp(localhost:3306)/cashlens
-```
-
-3. Load environment variables:
-```bash
+# Edit .env with your database credentials
 export $(cat .env | xargs)
 ```
 
-See [docs/ENVIRONMENT.md](docs/ENVIRONMENT.md) for detailed configuration guide.
+See [docs/ENVIRONMENT.md](docs/ENVIRONMENT.md) for configuration options.
 
-### CLI Commands
+### 3. Run Backend
 
-Navigate to `backend/` directory first:
+**CLI Mode**:
 ```bash
 cd backend
+go run main.go cash income -a 5000 -b 2024-01-01 -c Salary -d "Monthly salary"
+go run main.go cash outcome -a 50 -b 2024-01-02 -c "Food & Dining" -d "Lunch"
+go run main.go cash summary -f 2024-01-01 -t 2024-01-31
 ```
 
-#### Cash Flow
-```bash
-# Record expense
-go run main.go cash outcome -a {amount} -b {date} -c {category} -d {description}
-
-# Record income
-go run main.go cash income -a {amount} -b {date} -c {category} -d {description}
-
-# Query transactions
-go run main.go cash query -h
-
-# Delete transactions
-go run main.go cash delete -h
-```
-
-#### Data Management
-```bash
-# Export to Excel
-go run main.go manage export -f {from_date} -t {to_date}
-
-# Import from Excel
-go run main.go manage import -i {file_path}
-```
-
-### REST API
-
-Start the API server:
+**API Server**:
 ```bash
 cd backend
 go run main.go server start -p 8080
 ```
 
-#### Available Endpoints
-- `POST /api/cash/outcome` - Create expense record
-- `POST /api/cash/income` - Create income record
-- `GET /api/cash/{id}` - Query by ID
-- `GET /api/cash/date/{date}` - Query by date
-- `DELETE /api/cash/{id}` - Delete by ID
-- `DELETE /api/cash/date/{date}` - Delete by date
+See [backend/docs/CLI.md](backend/docs/CLI.md) for all CLI commands.
 
-See [backend/docs/API.md](backend/docs/API.md) for complete API reference.
+### 4. Run Flutter UI
 
-### Docker
-
-Build and run with Docker Compose:
 ```bash
-cd backend
-docker-compose up --build
+cd flutter
+flutter run -d chrome
 ```
 
-See [docs/DOCKER.md](docs/DOCKER.md) for detailed Docker setup.
+See [flutter/docs/SETUP.md](flutter/docs/SETUP.md) for platform-specific setup.
 
-## Flutter UI (Coming Soon)
+## Documentation
 
-A cross-platform UI built with Flutter supporting:
-- Web (PWA)
-- Android
-- iOS
-
-See [flutter/docs/SETUP.md](flutter/docs/SETUP.md) for platform setup.
-
-## Development Roadmap
-
-Check [docs/TODO.md](docs/TODO.md) for:
-- Planned backend API endpoints
-- Flutter UI features
-- Future enhancements
-- User management plans
-
-## Dependencies
+### Getting Started
+- [Environment Setup](docs/ENVIRONMENT.md) - Database and configuration
+- [Docker Setup](docs/DOCKER.md) - Quick start with Docker
+- [Development Roadmap](docs/TODO.md) - Features and tasks
 
 ### Backend
-- [cobra](https://github.com/spf13/cobra) - CLI framework
-- [gorilla/mux](https://github.com/gorilla/mux) - HTTP router
-- [zap](https://github.com/uber-go/zap) - Structured logging
-- [excelize](https://github.com/qax-os/excelize) - Excel import/export
-- [decimal](https://github.com/shopspring/decimal) - Precise decimal calculations
-- [go-sql-driver](https://github.com/go-sql-driver/mysql) - MySQL driver
-- [mongo-go-driver](https://github.com/mongodb/mongo-go-driver) - MongoDB driver
+- [Backend README](backend/README.md) - Backend overview
+- [CLI Reference](backend/docs/CLI.md) - All CLI commands
+- [API Reference](backend/docs/API.md) - REST API endpoints
+- [Testing Guide](backend/docs/TESTING.md) - Backend testing
+
+### Flutter
+- [Flutter README](flutter/README.md) - Flutter overview
+- [Platform Setup](flutter/docs/SETUP.md) - Platform-specific guides
+- [Testing Guide](flutter/docs/TESTING.md) - Flutter testing
+
+### Technical
+- [Refactoring Roadmap](docs/REFACTORING_ROADMAP.md) - Performance improvements and architecture
+
+## Recent Achievements (Dec 2024)
+
+✅ **Backend Refactoring Complete**:
+- 825x performance improvement (date range queries)
+- Connection pooling and category caching
+- 87%+ test coverage
+- Thread-safe operations
+- Graceful shutdown
+- 100% service validation
+
+See [docs/REFACTORING_ROADMAP.md](docs/REFACTORING_ROADMAP.md) for details.
+
+## Architecture
+
+```
+┌─────────────────┐
+│   Flutter UI    │  (Web, Mobile, Desktop)
+└────────┬────────┘
+         │ HTTP
+┌────────▼────────┐
+│   REST API      │  (Go/Gorilla Mux)
+└────────┬────────┘
+         │
+┌────────▼────────┐
+│  Service Layer  │  (Business Logic)
+└────────┬────────┘
+         │
+┌────────▼────────┐
+│  Mapper Layer   │  (Database Abstraction)
+└────────┬────────┘
+         │
+    ┌────▼────┐
+    │ MongoDB │  or  │ MySQL │
+    └─────────┘      └───────┘
+```
+
+## Development Status
+
+**Backend** (Go):
+- ✅ 23 CLI commands (15 fully functional)
+- ✅ 6 REST API endpoints operational
+- ✅ Connection pooling and caching
+- ✅ Validation layer complete
+- ✅ 87%+ test coverage
+
+**Frontend** (Flutter):
+- ✅ Basic structure and navigation
+- ✅ Landing page and dashboard
+- ✅ Settings and currency support
+- ⏳ Transaction management (in progress)
+- ⏳ Category management (planned)
+- ⏳ Statistics and reports (planned)
+
+See [docs/TODO.md](docs/TODO.md) for complete roadmap.
+
+## Technology Stack
+
+**Backend**:
+- Go 1.21+
+- [Cobra](https://github.com/spf13/cobra) - CLI framework
+- [Gorilla Mux](https://github.com/gorilla/mux) - HTTP router
+- [Zap](https://github.com/uber-go/zap) - Structured logging
+- [Excelize](https://github.com/qax-os/excelize) - Excel operations
+- MongoDB & MySQL drivers
+
+**Frontend**:
+- Flutter 3.x
+- Riverpod - State management
+- Go Router - Navigation
+- Dio - HTTP client
+- Material 3 - UI design
+
+## Contributing
+
+When contributing:
+1. Read [docs/TODO.md](docs/TODO.md) for current priorities
+2. Follow existing code style and patterns
+3. Add tests for new features
+4. Update documentation as needed
+5. Run tests before committing
 
 ## License
 
 See [LICENSE](LICENSE) file for details.
+
+## Support
+
+For questions or issues:
+- Check documentation in `/docs`
+- Review [docs/TODO.md](docs/TODO.md) for known issues
+- See [session.md](session.md) for Ona collaboration notes (if working with Ona)

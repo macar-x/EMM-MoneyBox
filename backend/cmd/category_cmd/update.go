@@ -39,7 +39,7 @@ func init() {
 		&categoryName, "name", "n", "", "new category name (optional)")
 	updateCmd.Flags().StringVarP(
 		&parentPlainId, "parent", "p", "", "new parent category id (optional)")
-	
+
 	updateCmd.MarkFlagRequired("id")
 	CategoryCmd.AddCommand(updateCmd)
 }

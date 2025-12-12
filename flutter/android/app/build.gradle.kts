@@ -22,7 +22,7 @@ android {
     defaultConfig {
         applicationId = "com.cashlens.app"
         // Minimum SDK version for Flutter 3.x
-        minSdk = 21
+        minSdk = flutter.minSdkVersion
         targetSdk = flutter.targetSdkVersion
         versionCode = flutter.versionCode
         versionName = flutter.versionName

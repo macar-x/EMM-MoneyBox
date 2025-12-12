@@ -22,6 +22,9 @@
 # Config Files
 .env
 
+# Ona Session Notes
+session.md
+
 # Flutter/Dart
 flutter/.dart_tool/
 flutter/.flutter-plugins
