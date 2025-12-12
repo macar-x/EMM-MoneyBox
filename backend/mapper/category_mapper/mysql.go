@@ -134,15 +134,17 @@ func (CategoryMySqlMapper) InsertCategoryByEntity(newEntity model.CategoryEntity
 	return newPlainId
 }
 
-func (CategoryMySqlMapper) UpdateCategoryByEntity(plainId string) model.CategoryEntity {
+func (CategoryMySqlMapper) UpdateCategoryByEntity(plainId string, updatedEntity model.CategoryEntity) model.CategoryEntity {
 	targetEntity := INSTANCE.GetCategoryByObjectId(plainId)
 	if targetEntity.IsEmpty() {
 		util.Logger.Infoln("category is not exist")
 		return model.CategoryEntity{}
 	}
 
-	// todo: update specific fields by passing params (parentId, name)
-	targetEntity.ModifyTime = time.Now()
+	// Update fields from updatedEntity while preserving ID and CreateTime
+	updatedEntity.Id = targetEntity.Id
+	updatedEntity.CreateTime = targetEntity.CreateTime
+	updatedEntity.ModifyTime = time.Now()
 
 	var sqlString bytes.Buffer
 	sqlString.WriteString("UPDATE ")
@@ -161,8 +163,8 @@ func (CategoryMySqlMapper) UpdateCategoryByEntity(plainId string) model.Category
 		util.Logger.Errorw("update failed", "error", err)
 	}
 
-	result, err := statement.Exec(targetEntity.ParentId.Hex(), targetEntity.Name, targetEntity.Remark,
-		targetEntity.ModifyTime, targetEntity.Id)
+	result, err := statement.Exec(updatedEntity.ParentId.Hex(), updatedEntity.Name, updatedEntity.Remark,
+		updatedEntity.ModifyTime, updatedEntity.Id)
 	if err != nil {
 		util.Logger.Errorw("update failed", "error", err)
 	}
@@ -176,7 +178,7 @@ func (CategoryMySqlMapper) UpdateCategoryByEntity(plainId string) model.Category
 	// Invalidate cache on update
 	cache.GetCategoryCache().Clear()
 
-	return targetEntity
+	return updatedEntity
 }
 
 func (CategoryMySqlMapper) DeleteCategoryByObjectId(plainId string) model.CategoryEntity {
@@ -220,6 +222,63 @@ func (CategoryMySqlMapper) DeleteCategoryByObjectId(plainId string) model.Catego
 	cache.GetCategoryCache().Clear()
 
 	return targetEntity
+}
+
+func (CategoryMySqlMapper) GetAllCategories(limit, offset int) []model.CategoryEntity {
+	var sqlString bytes.Buffer
+	sqlString.WriteString("SELECT ID, PARENT_ID, NAME FROM ")
+	sqlString.WriteString(database.CategoryTableName)
+	sqlString.WriteString(" ORDER BY NAME ASC ")
+
+	if limit > 0 {
+		sqlString.WriteString(" LIMIT ? OFFSET ? ")
+	}
+
+	connection := database.GetMySqlConnection()
+	defer database.CloseMySqlConnection()
+
+	var rows *sql.Rows
+	var err error
+
+	if limit > 0 {
+		rows, err = connection.Query(sqlString.String(), limit, offset)
+	} else {
+		rows, err = connection.Query(sqlString.String())
+	}
+
+	if err != nil {
+		util.Logger.Errorw("query all categories failed", "error", err)
+		return []model.CategoryEntity{}
+	}
+
+	var targetEntityList []model.CategoryEntity
+	for rows.Next() {
+		targetEntityList = append(targetEntityList, convertRow2CategoryEntity(rows))
+	}
+	return targetEntityList
+}
+
+func (CategoryMySqlMapper) CountAllCategories() int64 {
+	var sqlString bytes.Buffer
+	sqlString.WriteString("SELECT COUNT(1) FROM ")
+	sqlString.WriteString(database.CategoryTableName)
+
+	connection := database.GetMySqlConnection()
+	defer database.CloseMySqlConnection()
+
+	rows, err := connection.Query(sqlString.String())
+	if err != nil {
+		util.Logger.Errorw("count all categories failed", "error", err)
+		return 0
+	}
+
+	var count int64
+	rows.Next()
+	if err = rows.Scan(&count); err != nil {
+		util.Logger.Errorw("parse count failed", "error", err)
+		return 0
+	}
+	return count
 }
 
 func convertRow2CategoryEntity(rows *sql.Rows) model.CategoryEntity {

@@ -80,10 +80,11 @@ func UpdateById(plainId, belongsDate, categoryName string, amount float64, descr
 	// Update modify time
 	existingEntity.ModifyTime = time.Now()
 
-	// Note: The current mapper's UpdateCashFlowByEntity doesn't accept the entity
-	// It only takes ID and updates the modify time
-	// For now, we return an error indicating this limitation
-	// TODO: Enhance mapper to accept updated entity fields
+	// Call mapper to update the record
+	updatedEntity := cash_flow_mapper.INSTANCE.UpdateCashFlowByEntity(plainId, existingEntity)
+	if updatedEntity.IsEmpty() {
+		return model.CashFlowEntity{}, errors.New("failed to update cash_flow")
+	}
 
-	return model.CashFlowEntity{}, errors.New("update functionality requires mapper enhancement - mapper.UpdateCashFlowByEntity needs to accept entity parameter")
+	return updatedEntity, nil
 }
