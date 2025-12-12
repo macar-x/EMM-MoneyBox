@@ -88,7 +88,7 @@ func (CategoryMongoDbMapper) InsertCategoryByEntity(newEntity model.CategoryEnti
 }
 
 func (CategoryMongoDbMapper) UpdateCategoryByEntity(plainId string, updatedEntity model.CategoryEntity) model.CategoryEntity {
-	var objectId = util.Convert2ObjectId(plainId)
+	objectId := util.Convert2ObjectId(plainId)
 	if plainId == "" || objectId == primitive.NilObjectID {
 		util.Logger.Warnln("category's id is not acceptable")
 		return model.CategoryEntity{}
@@ -101,7 +101,7 @@ func (CategoryMongoDbMapper) UpdateCategoryByEntity(plainId string, updatedEntit
 	database.OpenMongoDbConnection(database.CategoryTableName)
 	defer database.CloseMongoDbConnection()
 
-	var targetEntity = convertBsonM2CategoryEntity(database.GetOneInMongoDB(filter))
+	targetEntity := convertBsonM2CategoryEntity(database.GetOneInMongoDB(filter))
 	if targetEntity.IsEmpty() {
 		util.Logger.Infoln("category is not exist")
 		return model.CategoryEntity{}
@@ -112,7 +112,7 @@ func (CategoryMongoDbMapper) UpdateCategoryByEntity(plainId string, updatedEntit
 	updatedEntity.CreateTime = targetEntity.CreateTime
 	updatedEntity.ModifyTime = time.Now()
 
-	var rowsAffected = database.UpdateManyInMongoDB(filter, convertCategoryEntity2BsonD(updatedEntity))
+	rowsAffected := database.UpdateManyInMongoDB(filter, convertCategoryEntity2BsonD(updatedEntity))
 	if rowsAffected != 1 {
 		// fixme: maybe we should have a rollback here.
 		util.Logger.Errorw("update failed", "rows_affected", rowsAffected)
@@ -165,7 +165,6 @@ func (CategoryMongoDbMapper) DeleteCategoryByObjectId(plainId string) model.Cate
 }
 
 func (CategoryMongoDbMapper) GetAllCategories(limit, offset int) []model.CategoryEntity {
-
 	database.OpenMongoDbConnection(database.CategoryTableName)
 	defer database.CloseMongoDbConnection()
 
@@ -206,7 +205,6 @@ func (CategoryMongoDbMapper) GetAllCategories(limit, offset int) []model.Categor
 }
 
 func (CategoryMongoDbMapper) CountAllCategories() int64 {
-
 	filter := bson.D{}
 
 	database.OpenMongoDbConnection(database.CategoryTableName)

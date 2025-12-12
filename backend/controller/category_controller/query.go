@@ -3,9 +3,9 @@ package category_controller
 import (
 	"net/http"
 
+	"github.com/gorilla/mux"
 	"github.com/macar-x/cashlens/service/category_service"
 	"github.com/macar-x/cashlens/util"
-	"github.com/gorilla/mux"
 )
 
 // QueryById queries a category by ID

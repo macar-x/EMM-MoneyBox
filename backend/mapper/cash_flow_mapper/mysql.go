@@ -279,7 +279,7 @@ func (CashFlowMySqlMapper) BulkInsertCashFlows(entities []model.CashFlowEntity) 
 }
 
 func (CashFlowMySqlMapper) UpdateCashFlowByEntity(plainId string, updatedEntity model.CashFlowEntity) model.CashFlowEntity {
-	var objectId = util.Convert2ObjectId(plainId)
+	objectId := util.Convert2ObjectId(plainId)
 	if plainId == "" || objectId == primitive.NilObjectID {
 		util.Logger.Warnln("cash_flow's id is not acceptable")
 		return model.CashFlowEntity{}
@@ -397,7 +397,6 @@ func (CashFlowMySqlMapper) DeleteCashFlowByBelongsDate(belongsDate time.Time) []
 }
 
 func (CashFlowMySqlMapper) GetAllCashFlows(limit, offset int) []model.CashFlowEntity {
-
 	var sqlString bytes.Buffer
 	sqlString.WriteString("SELECT ID, CATEGORY_ID, BELONGS_DATE, FLOW_TYPE, AMOUNT, DESCRIPTION FROM ")
 	sqlString.WriteString(database.CashFlowTableName)
@@ -432,7 +431,6 @@ func (CashFlowMySqlMapper) GetAllCashFlows(limit, offset int) []model.CashFlowEn
 }
 
 func (CashFlowMySqlMapper) CountAllCashFlows() int64 {
-
 	var sqlString bytes.Buffer
 	sqlString.WriteString("SELECT COUNT(1) FROM ")
 	sqlString.WriteString(database.CashFlowTableName)

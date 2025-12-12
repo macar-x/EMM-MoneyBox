@@ -135,7 +135,7 @@ func (CategoryMySqlMapper) InsertCategoryByEntity(newEntity model.CategoryEntity
 }
 
 func (CategoryMySqlMapper) UpdateCategoryByEntity(plainId string, updatedEntity model.CategoryEntity) model.CategoryEntity {
-	var targetEntity = INSTANCE.GetCategoryByObjectId(plainId)
+	targetEntity := INSTANCE.GetCategoryByObjectId(plainId)
 	if targetEntity.IsEmpty() {
 		util.Logger.Infoln("category is not exist")
 		return model.CategoryEntity{}
@@ -225,7 +225,6 @@ func (CategoryMySqlMapper) DeleteCategoryByObjectId(plainId string) model.Catego
 }
 
 func (CategoryMySqlMapper) GetAllCategories(limit, offset int) []model.CategoryEntity {
-
 	var sqlString bytes.Buffer
 	sqlString.WriteString("SELECT ID, PARENT_ID, NAME FROM ")
 	sqlString.WriteString(database.CategoryTableName)
@@ -260,7 +259,6 @@ func (CategoryMySqlMapper) GetAllCategories(limit, offset int) []model.CategoryE
 }
 
 func (CategoryMySqlMapper) CountAllCategories() int64 {
-
 	var sqlString bytes.Buffer
 	sqlString.WriteString("SELECT COUNT(1) FROM ")
 	sqlString.WriteString(database.CategoryTableName)

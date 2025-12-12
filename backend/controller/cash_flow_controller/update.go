@@ -4,9 +4,9 @@ import (
 	"net/http"
 	"strconv"
 
+	"github.com/gorilla/mux"
 	"github.com/macar-x/cashlens/service/cash_flow_service"
 	"github.com/macar-x/cashlens/util"
-	"github.com/gorilla/mux"
 )
 
 // UpdateById updates a cash flow record by ID

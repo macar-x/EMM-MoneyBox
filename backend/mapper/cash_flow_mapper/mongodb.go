@@ -213,7 +213,7 @@ func (CashFlowMongoDbMapper) BulkInsertCashFlows(entities []model.CashFlowEntity
 }
 
 func (CashFlowMongoDbMapper) UpdateCashFlowByEntity(plainId string, updatedEntity model.CashFlowEntity) model.CashFlowEntity {
-	var objectId = util.Convert2ObjectId(plainId)
+	objectId := util.Convert2ObjectId(plainId)
 	if plainId == "" || objectId == primitive.NilObjectID {
 		util.Logger.Warnln("cash_flow's id is not acceptable")
 		return model.CashFlowEntity{}
@@ -226,7 +226,7 @@ func (CashFlowMongoDbMapper) UpdateCashFlowByEntity(plainId string, updatedEntit
 	database.OpenMongoDbConnection(database.CashFlowTableName)
 	defer database.CloseMongoDbConnection()
 
-	var targetEntity = convertBsonM2CashFlowEntity(database.GetOneInMongoDB(filter))
+	targetEntity := convertBsonM2CashFlowEntity(database.GetOneInMongoDB(filter))
 	if targetEntity.IsEmpty() {
 		util.Logger.Infoln("cash_flow is not exist")
 		return model.CashFlowEntity{}
@@ -237,7 +237,7 @@ func (CashFlowMongoDbMapper) UpdateCashFlowByEntity(plainId string, updatedEntit
 	updatedEntity.CreateTime = targetEntity.CreateTime
 	updatedEntity.ModifyTime = time.Now()
 
-	var rowsAffected = database.UpdateManyInMongoDB(filter, convertCashFlowEntity2BsonD(updatedEntity))
+	rowsAffected := database.UpdateManyInMongoDB(filter, convertCashFlowEntity2BsonD(updatedEntity))
 	if rowsAffected != 1 {
 		// fixme: maybe we should have a rollback here.
 		util.Logger.Errorw("update failed", "rows_affected", rowsAffected)
@@ -297,7 +297,6 @@ func (CashFlowMongoDbMapper) DeleteCashFlowByBelongsDate(belongsDate time.Time) 
 }
 
 func (CashFlowMongoDbMapper) GetAllCashFlows(limit, offset int) []model.CashFlowEntity {
-
 	database.OpenMongoDbConnection(database.CashFlowTableName)
 	defer database.CloseMongoDbConnection()
 
@@ -338,7 +337,6 @@ func (CashFlowMongoDbMapper) GetAllCashFlows(limit, offset int) []model.CashFlow
 }
 
 func (CashFlowMongoDbMapper) CountAllCashFlows() int64 {
-
 	filter := bson.D{}
 
 	database.OpenMongoDbConnection(database.CashFlowTableName)
