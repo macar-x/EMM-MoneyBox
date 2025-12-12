@@ -3,6 +3,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 import 'package:cashlens/core/utils/demo_data.dart';
 import 'package:cashlens/core/providers/currency_provider.dart';
+import 'package:cashlens/core/providers/auth_provider.dart';
 import 'package:cashlens/core/models/currency.dart';
 import 'package:intl/intl.dart';
 
@@ -598,6 +599,8 @@ class _DashboardScreenState extends ConsumerState<DashboardScreen>
 
   Widget _buildDrawer(BuildContext context) {
     final theme = Theme.of(context);
+    final authState = ref.watch(authProvider);
+
     return Drawer(
       child: ListView(
         padding: EdgeInsets.zero,
@@ -621,7 +624,7 @@ class _DashboardScreenState extends ConsumerState<DashboardScreen>
                 ),
                 const SizedBox(height: 12),
                 Text(
-                  'Cashlens',
+                  authState.username ?? 'User',
                   style: theme.textTheme.titleLarge?.copyWith(
                     color: theme.colorScheme.onPrimary,
                     fontWeight: FontWeight.bold,
@@ -842,7 +845,8 @@ class _SettingsDialog extends ConsumerWidget {
               ),
               onTap: () {
                 Navigator.pop(context);
-                context.go('/');
+                ref.read(authProvider.notifier).logout();
+                context.go('/login');
               },
             ),
           ],

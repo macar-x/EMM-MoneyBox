@@ -177,16 +177,10 @@ class _LandingPageState extends ConsumerState<LandingPage>
                         ),
                         const SizedBox(height: 24),
 
-                        // Login hint (for future)
+                        // Login hint
                         TextButton(
                           onPressed: () {
-                            // TODO: Navigate to login
-                            ScaffoldMessenger.of(context).showSnackBar(
-                              const SnackBar(
-                                content: Text('Login feature coming soon!'),
-                                duration: Duration(seconds: 2),
-                              ),
-                            );
+                            context.go('/login');
                           },
                           child: Text(
                             'Already have an account? Sign in',
