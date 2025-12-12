@@ -1,6 +1,7 @@
 package category_mapper
 
 import (
+	"context"
 	"time"
 
 	"github.com/macar-x/cashlens/cache"
@@ -90,7 +91,7 @@ func (CategoryMongoDbMapper) InsertCategoryByEntity(newEntity model.CategoryEnti
 	return newCategoryId.Hex()
 }
 
-func (CategoryMongoDbMapper) UpdateCategoryByEntity(plainId string) model.CategoryEntity {
+func (CategoryMongoDbMapper) UpdateCategoryByEntity(plainId string, updatedEntity model.CategoryEntity) model.CategoryEntity {
 
 	var objectId = util.Convert2ObjectId(plainId)
 	if plainId == "" || objectId == primitive.NilObjectID {
@@ -111,10 +112,12 @@ func (CategoryMongoDbMapper) UpdateCategoryByEntity(plainId string) model.Catego
 		return model.CategoryEntity{}
 	}
 
-	// todo: update specific fields by passing params (parentId, name)
-	targetEntity.ModifyTime = time.Now()
+	// Update fields from updatedEntity while preserving ID and CreateTime
+	updatedEntity.Id = targetEntity.Id
+	updatedEntity.CreateTime = targetEntity.CreateTime
+	updatedEntity.ModifyTime = time.Now()
 
-	var rowsAffected = database.UpdateManyInMongoDB(filter, convertCategoryEntity2BsonD(targetEntity))
+	var rowsAffected = database.UpdateManyInMongoDB(filter, convertCategoryEntity2BsonD(updatedEntity))
 	if rowsAffected != 1 {
 		// fixme: maybe we should have a rollback here.
 		util.Logger.Errorw("update failed", "rows_affected", rowsAffected)
@@ -124,7 +127,7 @@ func (CategoryMongoDbMapper) UpdateCategoryByEntity(plainId string) model.Catego
 	// Invalidate cache on update
 	cache.GetCategoryCache().Clear()
 
-	return model.CategoryEntity{}
+	return updatedEntity
 }
 
 func (CategoryMongoDbMapper) DeleteCategoryByObjectId(plainId string) model.CategoryEntity {
@@ -165,6 +168,57 @@ func (CategoryMongoDbMapper) DeleteCategoryByObjectId(plainId string) model.Cate
 	cache.GetCategoryCache().Clear()
 	
 	return targetEntity
+}
+
+func (CategoryMongoDbMapper) GetAllCategories(limit, offset int) []model.CategoryEntity {
+
+	database.OpenMongoDbConnection(database.CategoryTableName)
+	defer database.CloseMongoDbConnection()
+
+	collection := database.GetMongoCollection(database.CategoryTableName)
+
+	// Empty filter to get all documents, with pagination
+	filter := bson.D{}
+
+	ctx := context.TODO()
+	findOptions := database.GetFindOptions()
+	if limit > 0 {
+		findOptions.SetLimit(int64(limit))
+	}
+	if offset > 0 {
+		findOptions.SetSkip(int64(offset))
+	}
+	// Sort by name ascending
+	findOptions.SetSort(bson.D{primitive.E{Key: "name", Value: 1}})
+
+	cursor, err := collection.Find(ctx, filter, findOptions)
+	if err != nil {
+		util.Logger.Errorw("query all categories failed", "error", err)
+		return []model.CategoryEntity{}
+	}
+	defer cursor.Close(ctx)
+
+	var targetEntityList []model.CategoryEntity
+	for cursor.Next(ctx) {
+		var bsonM bson.M
+		if err := cursor.Decode(&bsonM); err != nil {
+			util.Logger.Errorw("decode failed", "error", err)
+			continue
+		}
+		targetEntityList = append(targetEntityList, convertBsonM2CategoryEntity(bsonM))
+	}
+
+	return targetEntityList
+}
+
+func (CategoryMongoDbMapper) CountAllCategories() int64 {
+
+	filter := bson.D{}
+
+	database.OpenMongoDbConnection(database.CategoryTableName)
+	defer database.CloseMongoDbConnection()
+
+	return database.CountInMongoDB(filter)
 }
 
 func convertCategoryEntity2BsonD(entity model.CategoryEntity) bson.D {

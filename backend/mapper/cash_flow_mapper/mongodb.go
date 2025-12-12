@@ -221,7 +221,7 @@ func (CashFlowMongoDbMapper) BulkInsertCashFlows(entities []model.CashFlowEntity
 	return ids, nil
 }
 
-func (CashFlowMongoDbMapper) UpdateCashFlowByEntity(plainId string) model.CashFlowEntity {
+func (CashFlowMongoDbMapper) UpdateCashFlowByEntity(plainId string, updatedEntity model.CashFlowEntity) model.CashFlowEntity {
 
 	var objectId = util.Convert2ObjectId(plainId)
 	if plainId == "" || objectId == primitive.NilObjectID {
@@ -242,17 +242,19 @@ func (CashFlowMongoDbMapper) UpdateCashFlowByEntity(plainId string) model.CashFl
 		return model.CashFlowEntity{}
 	}
 
-	// todo: update specific fields by passing params (category_name, belongs_date, flow_type, amount, description)
-	targetEntity.ModifyTime = time.Now()
+	// Update fields from updatedEntity while preserving ID and CreateTime
+	updatedEntity.Id = targetEntity.Id
+	updatedEntity.CreateTime = targetEntity.CreateTime
+	updatedEntity.ModifyTime = time.Now()
 
-	var rowsAffected = database.UpdateManyInMongoDB(filter, convertCashFlowEntity2BsonD(targetEntity))
+	var rowsAffected = database.UpdateManyInMongoDB(filter, convertCashFlowEntity2BsonD(updatedEntity))
 	if rowsAffected != 1 {
 		// fixme: maybe we should have a rollback here.
 		util.Logger.Errorw("update failed", "rows_affected", rowsAffected)
 		return model.CashFlowEntity{}
 	}
 
-	return targetEntity
+	return updatedEntity
 }
 
 func (CashFlowMongoDbMapper) DeleteCashFlowByObjectId(plainId string) model.CashFlowEntity {
@@ -304,6 +306,57 @@ func (CashFlowMongoDbMapper) DeleteCashFlowByBelongsDate(belongsDate time.Time) 
 		util.Logger.Errorw("delete failed", "rows_affected", rowsAffected)
 	}
 	return cashFlowList
+}
+
+func (CashFlowMongoDbMapper) GetAllCashFlows(limit, offset int) []model.CashFlowEntity {
+
+	database.OpenMongoDbConnection(database.CashFlowTableName)
+	defer database.CloseMongoDbConnection()
+
+	collection := database.GetMongoCollection(database.CashFlowTableName)
+
+	// Empty filter to get all documents, with pagination
+	filter := bson.D{}
+
+	ctx := context.TODO()
+	findOptions := database.GetFindOptions()
+	if limit > 0 {
+		findOptions.SetLimit(int64(limit))
+	}
+	if offset > 0 {
+		findOptions.SetSkip(int64(offset))
+	}
+	// Sort by belongs_date descending (newest first)
+	findOptions.SetSort(bson.D{primitive.E{Key: "belongs_date", Value: -1}})
+
+	cursor, err := collection.Find(ctx, filter, findOptions)
+	if err != nil {
+		util.Logger.Errorw("query all failed", "error", err)
+		return []model.CashFlowEntity{}
+	}
+	defer cursor.Close(ctx)
+
+	var targetEntityList []model.CashFlowEntity
+	for cursor.Next(ctx) {
+		var bsonM bson.M
+		if err := cursor.Decode(&bsonM); err != nil {
+			util.Logger.Errorw("decode failed", "error", err)
+			continue
+		}
+		targetEntityList = append(targetEntityList, convertBsonM2CashFlowEntity(bsonM))
+	}
+
+	return targetEntityList
+}
+
+func (CashFlowMongoDbMapper) CountAllCashFlows() int64 {
+
+	filter := bson.D{}
+
+	database.OpenMongoDbConnection(database.CashFlowTableName)
+	defer database.CloseMongoDbConnection()
+
+	return database.CountInMongoDB(filter)
 }
 
 func convertCashFlowEntity2BsonD(entity model.CashFlowEntity) bson.D {

@@ -1,19 +1,32 @@
 package cash_flow_service
 
 import (
+	"github.com/macar-x/cashlens/mapper/cash_flow_mapper"
 	"github.com/macar-x/cashlens/model"
 )
 
 // QueryAll queries all cash flows with optional filtering and pagination
-// Note: This is a simplified implementation that queries all and filters in memory
-// For production, this should be done at the database level with proper pagination
-func QueryAll(cashType string, limit, offset int) ([]*model.CashFlowEntity, error) {
-	// For now, return empty list with a note that this needs mapper enhancement
-	// To properly implement this, we need:
-	// 1. New mapper method: GetAllCashFlows(filter, limit, offset)
-	// 2. Database-level pagination and filtering
-	
-	// Temporary implementation: return empty list
-	// TODO: Add GetAllCashFlows method to mapper interface
-	return []*model.CashFlowEntity{}, nil
+func QueryAll(cashType string, limit, offset int) ([]*model.CashFlowEntity, int64, error) {
+	// Get total count
+	totalCount := cash_flow_mapper.INSTANCE.CountAllCashFlows()
+
+	// Get paginated results
+	cashFlows := cash_flow_mapper.INSTANCE.GetAllCashFlows(limit, offset)
+
+	// Filter by cash type if specified
+	var filteredResults []*model.CashFlowEntity
+	if cashType != "" {
+		for i := range cashFlows {
+			if cashFlows[i].FlowType == cashType {
+				filteredResults = append(filteredResults, &cashFlows[i])
+			}
+		}
+	} else {
+		// Convert to pointer slice
+		for i := range cashFlows {
+			filteredResults = append(filteredResults, &cashFlows[i])
+		}
+	}
+
+	return filteredResults, totalCount, nil
 }

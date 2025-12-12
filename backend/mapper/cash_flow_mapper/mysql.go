@@ -287,7 +287,7 @@ func (CashFlowMySqlMapper) BulkInsertCashFlows(entities []model.CashFlowEntity) 
 	return ids, nil
 }
 
-func (CashFlowMySqlMapper) UpdateCashFlowByEntity(plainId string) model.CashFlowEntity {
+func (CashFlowMySqlMapper) UpdateCashFlowByEntity(plainId string, updatedEntity model.CashFlowEntity) model.CashFlowEntity {
 
 	var objectId = util.Convert2ObjectId(plainId)
 	if plainId == "" || objectId == primitive.NilObjectID {
@@ -301,8 +301,10 @@ func (CashFlowMySqlMapper) UpdateCashFlowByEntity(plainId string) model.CashFlow
 		return model.CashFlowEntity{}
 	}
 
-	// todo: update specific fields by passing params (category_name, belongs_date, flow_type, amount, description)
-	targetEntity.ModifyTime = time.Now()
+	// Update fields from updatedEntity while preserving ID and CreateTime
+	updatedEntity.Id = targetEntity.Id
+	updatedEntity.CreateTime = targetEntity.CreateTime
+	updatedEntity.ModifyTime = time.Now()
 
 	var sqlString bytes.Buffer
 	sqlString.WriteString("UPDATE ")
@@ -324,8 +326,8 @@ func (CashFlowMySqlMapper) UpdateCashFlowByEntity(plainId string) model.CashFlow
 		util.Logger.Errorw("update failed", "error", err)
 	}
 
-	result, err := statement.Exec(targetEntity.CategoryId.Hex(), targetEntity.BelongsDate, targetEntity.FlowType,
-		targetEntity.Amount, targetEntity.Description, targetEntity.Remark, targetEntity.ModifyTime, plainId)
+	result, err := statement.Exec(updatedEntity.CategoryId.Hex(), updatedEntity.BelongsDate, updatedEntity.FlowType,
+		updatedEntity.Amount, updatedEntity.Description, updatedEntity.Remark, updatedEntity.ModifyTime, plainId)
 	if err != nil {
 		util.Logger.Errorw("update failed", "error", err)
 	}
@@ -335,7 +337,7 @@ func (CashFlowMySqlMapper) UpdateCashFlowByEntity(plainId string) model.CashFlow
 		// fixme: maybe we should have a rollback here.
 		util.Logger.Errorw("update failed", "error", err, "rows_affected", rowsAffected)
 	}
-	return targetEntity
+	return updatedEntity
 }
 
 func (CashFlowMySqlMapper) DeleteCashFlowByObjectId(plainId string) model.CashFlowEntity {
@@ -404,6 +406,65 @@ func (CashFlowMySqlMapper) DeleteCashFlowByBelongsDate(belongsDate time.Time) []
 		util.Logger.Errorw("delete failed", "error", err, "rows_affected", rowsAffected)
 	}
 	return cashFlowList
+}
+
+func (CashFlowMySqlMapper) GetAllCashFlows(limit, offset int) []model.CashFlowEntity {
+
+	var sqlString bytes.Buffer
+	sqlString.WriteString("SELECT ID, CATEGORY_ID, BELONGS_DATE, FLOW_TYPE, AMOUNT, DESCRIPTION FROM ")
+	sqlString.WriteString(database.CashFlowTableName)
+	sqlString.WriteString(" ORDER BY BELONGS_DATE DESC ")
+
+	if limit > 0 {
+		sqlString.WriteString(" LIMIT ? OFFSET ? ")
+	}
+
+	connection := database.GetMySqlConnection()
+	defer database.CloseMySqlConnection()
+
+	var rows *sql.Rows
+	var err error
+
+	if limit > 0 {
+		rows, err = connection.Query(sqlString.String(), limit, offset)
+	} else {
+		rows, err = connection.Query(sqlString.String())
+	}
+
+	if err != nil {
+		util.Logger.Errorw("query all failed", "error", err)
+		return []model.CashFlowEntity{}
+	}
+
+	var targetEntityList []model.CashFlowEntity
+	for rows.Next() {
+		targetEntityList = append(targetEntityList, convertRow2CashFlowEntity(rows))
+	}
+	return targetEntityList
+}
+
+func (CashFlowMySqlMapper) CountAllCashFlows() int64 {
+
+	var sqlString bytes.Buffer
+	sqlString.WriteString("SELECT COUNT(1) FROM ")
+	sqlString.WriteString(database.CashFlowTableName)
+
+	connection := database.GetMySqlConnection()
+	defer database.CloseMySqlConnection()
+
+	rows, err := connection.Query(sqlString.String())
+	if err != nil {
+		util.Logger.Errorw("count all failed", "error", err)
+		return 0
+	}
+
+	var count int64
+	rows.Next()
+	if err = rows.Scan(&count); err != nil {
+		util.Logger.Errorw("parse count failed", "error", err)
+		return 0
+	}
+	return count
 }
 
 func convertRow2CashFlowEntity(rows *sql.Rows) model.CashFlowEntity {

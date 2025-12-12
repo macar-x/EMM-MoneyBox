@@ -18,7 +18,7 @@ func UpdateService(plainId, parentPlainId, categoryName string) error {
 		return errors.New("category not found")
 	}
 
-	// Validate parent if provided
+	// Update fields that are provided
 	if parentPlainId != "" {
 		parentCategory := category_mapper.INSTANCE.GetCategoryByObjectId(parentPlainId)
 		if parentCategory.IsEmpty() {
@@ -28,11 +28,18 @@ func UpdateService(plainId, parentPlainId, categoryName string) error {
 		if parentPlainId == plainId {
 			return errors.New("category cannot be its own parent")
 		}
+		existingCategory.ParentId = parentCategory.Id
 	}
 
-	// Note: Similar to cash_flow update, the mapper's UpdateCategoryByEntity
-	// doesn't accept the updated entity fields
-	// TODO: Enhance mapper to accept updated entity fields
-	
-	return errors.New("category update functionality requires mapper enhancement - mapper.UpdateCategoryByEntity needs to accept entity parameter")
+	if categoryName != "" {
+		existingCategory.Name = categoryName
+	}
+
+	// Call mapper to update the record
+	updatedEntity := category_mapper.INSTANCE.UpdateCategoryByEntity(plainId, existingCategory)
+	if updatedEntity.IsEmpty() {
+		return errors.New("failed to update category")
+	}
+
+	return nil
 }
