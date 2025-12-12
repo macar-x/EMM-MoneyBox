@@ -8,9 +8,11 @@ import (
 	"github.com/spf13/cobra"
 )
 
-var limit int
-var offset int
-var cashType string
+var (
+	limit    int
+	offset   int
+	cashType string
+)
 
 var listCmd = &cobra.Command{
 	Use:   "list",
@@ -54,6 +56,6 @@ func init() {
 		&offset, "offset", "o", 0, "number of records to skip")
 	listCmd.Flags().StringVarP(
 		&cashType, "type", "t", "", "filter by type (income/outcome)")
-	
+
 	CashCmd.AddCommand(listCmd)
 }

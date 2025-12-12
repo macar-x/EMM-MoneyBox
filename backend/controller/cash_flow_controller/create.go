@@ -10,7 +10,6 @@ import (
 )
 
 func CreateOutcome(w http.ResponseWriter, r *http.Request) {
-
 	requestBody, err := validCashFlowDTO(r)
 	if err != nil {
 		util.ComposeJSONResponse(w, http.StatusOK, map[string]string{"error": err.Error()})
@@ -26,7 +25,6 @@ func CreateOutcome(w http.ResponseWriter, r *http.Request) {
 }
 
 func CreateIncome(w http.ResponseWriter, r *http.Request) {
-
 	requestBody, err := validCashFlowDTO(r)
 	if err != nil {
 		util.ComposeJSONResponse(w, http.StatusOK, map[string]string{"error": err.Error()})
@@ -42,7 +40,6 @@ func CreateIncome(w http.ResponseWriter, r *http.Request) {
 }
 
 func validCashFlowDTO(r *http.Request) (model.CashFlowDTO, error) {
-
 	var requestBody model.CashFlowDTO
 	err := util.ParseJSONRequest(r, &requestBody)
 	if err != nil {

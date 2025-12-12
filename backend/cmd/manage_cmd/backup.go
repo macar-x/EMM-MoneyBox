@@ -33,6 +33,6 @@ If no path is specified, creates backup in current directory with timestamp.`,
 func init() {
 	backupCmd.Flags().StringVarP(
 		&backupPath, "output", "o", "", "backup file path (optional, default: cashlens_backup_TIMESTAMP.json)")
-	
+
 	ManageCmd.AddCommand(backupCmd)
 }

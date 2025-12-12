@@ -12,7 +12,6 @@ var deleteCmd = &cobra.Command{
 	Use:   "delete",
 	Short: "delete cash_flow by specific type",
 	RunE: func(cmd *cobra.Command, args []string) error {
-
 		// Valid params through command.
 		if cash_flow_service.IsDeleteFieldsConflicted(plainId, belongsDate) {
 			return errors.New("should have one and only one delete type")

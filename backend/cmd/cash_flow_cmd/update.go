@@ -44,7 +44,7 @@ func init() {
 		&amount, "amount", "a", 0.00, "new amount (optional)")
 	updateCmd.Flags().StringVarP(
 		&descriptionExact, "description", "d", "", "new description (optional)")
-	
+
 	updateCmd.MarkFlagRequired("id")
 	CashCmd.AddCommand(updateCmd)
 }
