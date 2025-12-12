@@ -83,7 +83,7 @@ get_services() {
     # Check if services are specified in .env
     if [ -n "$ENABLE_SERVICES" ]; then
         services=$ENABLE_SERVICES
-        print_info "Using services from .env: $services"
+        print_info "Using services from .env: $services" >&2
     else
         # Interactive mode
         print_header "Service Selection"
@@ -114,8 +114,8 @@ get_services() {
                 ;;
             5)
                 services="backend"
-                print_warning "Backend only mode requires an external database!"
-                print_info "Make sure DB_TYPE and corresponding DB_URI are configured in .env"
+                print_warning "Backend only mode requires an external database!" >&2
+                print_info "Make sure DB_TYPE and corresponding DB_URI are configured in .env" >&2
                 ;;
             6)
                 echo ""
