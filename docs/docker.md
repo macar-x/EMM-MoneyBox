@@ -7,20 +7,51 @@ Quick start guide for running Cashlens with Docker.
 - Docker Desktop installed
 - Docker Compose installed (included with Docker Desktop)
 
-## Quick Start
+## Quick Start (Recommended)
+
+The easiest way to start Cashlens is using the `start.sh` script:
+
+```bash
+./start.sh
+```
+
+This script will:
+1. Check if Docker is installed
+2. Create `.env` from `.env.sample` if it doesn't exist
+3. Prompt you to select which services to start:
+   - MongoDB + Backend (default)
+   - MySQL + Backend
+   - MongoDB only
+   - MySQL only
+   - Backend only
+   - Custom selection
+4. Start the selected services with proper configuration
+5. Show service status and access information
+
+### Non-Interactive Mode
+
+You can also configure services via `.env` file and run non-interactively:
+
+```bash
+# Edit .env file
+ENABLE_SERVICES=mongodb,backend
+
+# Run start.sh
+./start.sh
+```
+
+## Manual Setup
 
 ### Start MongoDB (Default)
 
 ```bash
-docker-compose up -d mongodb
+docker-compose --profile mongodb up -d
 ```
 
 This will:
 - Start MongoDB on port 27017
-- Create `cashlens` database
-- Insert 8 demo categories
-- Insert 15 demo transactions
-- Create indexes for performance
+- Create `cashlens` database with demo data
+- Use credentials from `.env` file
 
 **Connection String**:
 ```
@@ -30,47 +61,93 @@ mongodb://cashlens:cashlens123@localhost:27017/cashlens?authSource=admin
 ### Start MySQL (Alternative)
 
 ```bash
-docker-compose --profile mysql up -d mysql
+docker-compose --profile mysql up -d
 ```
 
 This will:
 - Start MySQL on port 3306
-- Create `cashlens` database
-- Insert demo data
+- Create `cashlens` database with demo data
+- Use credentials from `.env` file
 
 **Connection String**:
 ```
 mysql://cashlens:cashlens123@localhost:3306/cashlens
 ```
 
-### Start Backend API (Optional)
+### Start Backend API
 
 ```bash
-docker-compose --profile backend up -d backend
+docker-compose --profile backend up -d
 ```
 
 This will:
 - Build and start the Go backend
-- Connect to MongoDB
-- Expose API on port 8080
+- Connect to database (MongoDB or MySQL based on DB_TYPE)
+- Expose API on configured port (default: 8080)
+
+### Start All Services
+
+**With MongoDB**:
+```bash
+docker-compose --profile mongodb --profile backend up -d
+```
+
+**With MySQL**:
+```bash
+docker-compose --profile mysql --profile backend up -d
+```
 
 ## Environment Configuration
 
-Update `.env` file:
+All configuration is managed through the `.env` file. Copy `.env.sample` to `.env` and customize:
 
-**For MongoDB**:
 ```bash
-DB_TYPE=mongodb
-MONGO_DB_URI=mongodb://cashlens:cashlens123@localhost:27017/cashlens?authSource=admin
+cp .env.sample .env
+```
+
+### Key Configuration Variables
+
+**Service Selection**:
+```bash
+# Services to enable (used by start.sh)
+ENABLE_SERVICES=mongodb,backend
+```
+
+**MongoDB Configuration**:
+```bash
+MONGO_VERSION=7.0
+MONGO_PORT=27017
+MONGO_ROOT_USERNAME=cashlens
+MONGO_ROOT_PASSWORD=your-secure-password
+```
+
+**MySQL Configuration**:
+```bash
+MYSQL_VERSION=8.0
+MYSQL_PORT=3306
+MYSQL_USER=cashlens
+MYSQL_PASSWORD=your-secure-password
+MYSQL_ROOT_PASSWORD=your-root-password
+```
+
+**Backend Configuration**:
+```bash
+DB_TYPE=mongodb  # or mysql
+SERVER_PORT=8080
+LOG_LEVEL=info
 DB_NAME=cashlens
 ```
 
-**For MySQL**:
+**Database URIs**:
 ```bash
-DB_TYPE=mysql
-MYSQL_DB_URI=cashlens:cashlens123@tcp(localhost:3306)/cashlens
-DB_NAME=cashlens
+# For Docker MongoDB (includes database name)
+MONGO_DB_URI=mongodb://cashlens:cashlens123@mongodb:27017/cashlens?authSource=admin
+
+# For Docker MySQL (database name appended automatically from DB_NAME)
+MYSQL_DB_URI=cashlens:cashlens123@tcp(mysql:3306)
 ```
+
+See `.env.sample` for all available configuration options.
 
 ## Demo Data
 
