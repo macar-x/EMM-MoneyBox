@@ -8,7 +8,6 @@ import (
 )
 
 func QueryService(plainId, parentPlainId, categoryName string) error {
-
 	if isQueryFieldsConflicted(plainId, parentPlainId, categoryName) {
 		return errors.New("should have one and only one query type")
 	}
@@ -32,9 +31,8 @@ func QueryService(plainId, parentPlainId, categoryName string) error {
 }
 
 func isQueryFieldsConflicted(plainId, parentPlainId, name string) bool {
-
 	// check if already one semi-optional field is filled
-	var semiOptionalFieldFilledFlag = false
+	semiOptionalFieldFilledFlag := false
 
 	// plain_id is not empty
 	if plainId != "" {
@@ -62,7 +60,6 @@ func isQueryFieldsConflicted(plainId, parentPlainId, name string) bool {
 }
 
 func queryById(plainId string) {
-
 	categoryEntity := category_mapper.INSTANCE.GetCategoryByObjectId(plainId)
 	if categoryEntity.IsEmpty() {
 		fmt.Println("category not found")
@@ -72,7 +69,6 @@ func queryById(plainId string) {
 }
 
 func queryByParentId(plainParentId string) {
-
 	matchedCategoryList := category_mapper.INSTANCE.GetCategoryByParentId(plainParentId)
 	if len(matchedCategoryList) == 0 {
 		fmt.Println("no matched categories")
@@ -85,7 +81,6 @@ func queryByParentId(plainParentId string) {
 }
 
 func queryByName(categoryName string) {
-
 	categoryEntity := category_mapper.INSTANCE.GetCategoryByName(categoryName)
 	if categoryEntity.IsEmpty() {
 		fmt.Println("category not found")

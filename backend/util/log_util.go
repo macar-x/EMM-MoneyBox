@@ -1,15 +1,18 @@
 package util
 
 import (
-	"go.uber.org/zap"
-	"go.uber.org/zap/zapcore"
 	"log"
 	"os"
+
+	"go.uber.org/zap"
+	"go.uber.org/zap/zapcore"
 )
 
-var consoleLogger *zap.Logger
-var sugaredConsoleLogger *zap.SugaredLogger
-var Logger = getLogger()
+var (
+	consoleLogger        *zap.Logger
+	sugaredConsoleLogger *zap.SugaredLogger
+	Logger               = getLogger()
+)
 
 func initLogger() {
 	if consoleLogger == nil {
@@ -30,7 +33,6 @@ func getLogger() *zap.SugaredLogger {
 }
 
 func initConsoleLogger() *zap.Logger {
-
 	// 設定 console 輸出
 	consoleOutput := zapcore.Lock(os.Stdout)
 	// 設定 file 輸出
@@ -54,8 +56,7 @@ func initConsoleLogger() *zap.Logger {
 }
 
 func createLogFile() *os.File {
-
-	var logFilePath = GetConfigByKey("logger.file")
+	logFilePath := GetConfigByKey("logger.file")
 	if logFilePath == "" {
 		logFilePath = "./emm-moneybox.log"
 	}

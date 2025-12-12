@@ -12,7 +12,6 @@ var queryCmd = &cobra.Command{
 	Use:   "query",
 	Short: "query for cash_flow data",
 	RunE: func(cmd *cobra.Command, args []string) error {
-
 		// Valid params through command.
 		if cash_flow_service.IsQueryFieldsConflicted(plainId, belongsDate, descriptionExact, descriptionFuzzy) {
 			return errors.New("should have one and only one query type")

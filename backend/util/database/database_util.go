@@ -1,18 +1,23 @@
 package database
 
 import (
-	"github.com/macar-x/cashlens/util"
 	"log"
 	"sync"
+
+	"github.com/macar-x/cashlens/util"
 )
 
-var once = sync.Once{}
-var defaultDatabaseUri string
-var defaultDatabaseName string
-var isConnected = false
+var (
+	once                = sync.Once{}
+	defaultDatabaseUri  string
+	defaultDatabaseName string
+	isConnected         = false
+)
 
-var CashFlowTableName = "cash_flow"
-var CategoryTableName = "category"
+var (
+	CashFlowTableName = "cash_flow"
+	CategoryTableName = "category"
+)
 
 func initMongoDbConnection() {
 	defaultDatabaseUri = util.GetConfigByKey("db.mongodb.url")

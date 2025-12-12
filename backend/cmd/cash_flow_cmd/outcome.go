@@ -12,7 +12,6 @@ var outcomeCmd = &cobra.Command{
 	Use:   "outcome",
 	Short: "add new outcome cash_flow",
 	RunE: func(cmd *cobra.Command, args []string) error {
-
 		if !cash_flow_service.IsOutcomeRequiredFiledSatisfied(categoryName, amount) {
 			return errors.New("some required fields are empty")
 		}

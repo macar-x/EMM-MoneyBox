@@ -12,7 +12,9 @@ type CategoryMapper interface {
 	GetCategoryByName(categoryName string) model.CategoryEntity
 	GetCategoryByParentId(parentPlainId string) []model.CategoryEntity
 	InsertCategoryByEntity(newEntity model.CategoryEntity) string
-	UpdateCategoryByEntity(plainId string) model.CategoryEntity
+	UpdateCategoryByEntity(plainId string, updatedEntity model.CategoryEntity) model.CategoryEntity
+	GetAllCategories(limit, offset int) []model.CategoryEntity
+	CountAllCategories() int64
 	DeleteCategoryByObjectId(plainId string) model.CategoryEntity
 }
 

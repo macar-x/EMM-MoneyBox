@@ -33,7 +33,7 @@ func InitializeDemoData() error {
 
 	// Create sample transactions for the past week
 	today := time.Now()
-	
+
 	// Sample income
 	_, _ = cash_flow_service.SaveIncome(
 		today.AddDate(0, 0, -7).Format(model.DateFormatYYYYMMDD),
