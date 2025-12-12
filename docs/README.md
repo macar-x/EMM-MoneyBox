@@ -10,7 +10,7 @@ docs/
 ├── TODO.md                # Development roadmap
 ├── ENVIRONMENT.md         # Environment configuration
 ├── DOCKER.md              # Docker setup
-└── ona/                   # Internal session summaries
+└── REFACTORING_ROADMAP.md # Technical improvements
 
 backend/docs/
 ├── CLI.md                 # CLI reference
@@ -20,6 +20,8 @@ backend/docs/
 flutter/docs/
 ├── SETUP.md               # Platform setup
 └── TESTING.md             # Flutter testing
+
+session.md                 # Ona collaboration notes (gitignored)
 ```
 
 ## Project Documentation
@@ -79,11 +81,9 @@ Docker setup and usage:
   - Integration testing
   - Golden tests
 
-## Internal Documentation (`ona/`)
+## Ona Collaboration
 
-The `ona/` subdirectory contains internal session summaries and development notes created by Ona (AI assistant). These are for development reference and not intended for end users.
-
-See [ona/README.md](ona/README.md) for details.
+If working with Ona AI assistant, see `session.md` in the project root for collaboration notes and current session context. This file is excluded from git commits.
 
 ## Quick Links
 
