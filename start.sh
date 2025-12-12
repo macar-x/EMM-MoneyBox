@@ -114,6 +114,8 @@ get_services() {
                 ;;
             5)
                 services="backend"
+                print_warning "Backend only mode requires an external database!"
+                print_info "Make sure DB_TYPE and corresponding DB_URI are configured in .env"
                 ;;
             6)
                 echo ""
@@ -161,9 +163,17 @@ start_services() {
         COMPOSE_CMD="docker compose"
     fi
 
+    # Build profile flags
+    local profile_flags=""
+    IFS=',' read -ra PROFILE_ARRAY <<< "$profiles"
+    for profile in "${PROFILE_ARRAY[@]}"; do
+        profile=$(echo "$profile" | xargs) # trim whitespace
+        profile_flags="$profile_flags --profile $profile"
+    done
+
     # Start services
     print_info "Starting services with Docker Compose..."
-    COMPOSE_PROFILES=$profiles $COMPOSE_CMD up -d --build
+    $COMPOSE_CMD $profile_flags up -d --build
 
     print_success "Services started successfully!"
 }
