@@ -11,8 +11,7 @@ docs/
 ├── readme.md              # This file - documentation index
 ├── roadmap.md             # Version-based development roadmap
 ├── environment.md         # Environment configuration guide
-├── docker.md              # Docker setup and usage
-└── ona/                   # Internal session summaries
+└── docker.md              # Docker setup and usage
 
 backend/docs/
 ├── cli.md                 # Complete CLI reference
@@ -162,16 +161,10 @@ Topics covered:
 
 ## 📝 Internal Documentation
 
-### [ona/](ona/)
-**Internal session summaries**
-
-The `ona/` subdirectory contains internal development notes and session summaries created during development. These are for reference and not intended for end users.
-
-See [ona/README.md](ona/README.md) for the complete list of session notes.
 
 **Recent highlights**:
 - December 5, 2024: Performance refactoring complete (825x faster)
-- December 12, 2024: Complete REST API implementation
+- December 12, 2025: Complete REST API implementation
 
 ---
 
@@ -247,10 +240,6 @@ flutter run -d web
 - Flutter-specific information
 - Keep filenames lowercase
 
-**Internal notes** → `docs/ona/`
-- Session summaries
-- Development notes
-- Use format: `YYYYMMDD_TOPIC.md`
 
 ### File Naming Convention
 - All documentation filenames must be lowercase
@@ -317,5 +306,5 @@ flutter run -d web
 
 ---
 
-**Last Updated**: December 12, 2024
+**Last Updated**: December 12, 2025
 **Version**: 2.0 (Backend API Complete)

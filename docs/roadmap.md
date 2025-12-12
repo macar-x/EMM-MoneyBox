@@ -2,7 +2,7 @@
 
 **See your money clearly**
 
-**Last Updated**: December 12, 2024
+**Last Updated**: December 12, 2025
 **Current Version**: 2.0 (Backend API Complete)
 
 ---
@@ -65,13 +65,12 @@
 - ✅ Graceful shutdown for server
 - ✅ Test coverage: 87%+
 
-**Details**: See `docs/ona/20241205_CELEBRATION_COMPLETE.md`
 
 ---
 
-### ✅ Version 2.0 - Complete REST API (Completed Dec 12, 2024)
+### ✅ Version 2.0 - Complete REST API (Completed Dec 12, 2025)
 
-**Release Date**: December 12, 2024
+**Release Date**: December 12, 2025
 **Status**: Complete
 **Endpoints**: 21 total (12 cash flow + 7 category + 2 health)
 
@@ -462,5 +461,5 @@ GET    /api/version                    API info & endpoint list
 ---
 
 **Roadmap Version**: 2.0
-**Last Updated**: December 12, 2024
+**Last Updated**: December 12, 2025
 **Status**: Version 2.0 Complete - Ready for Flutter Integration
