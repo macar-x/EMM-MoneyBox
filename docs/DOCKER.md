@@ -140,11 +140,11 @@ DB_NAME=cashlens
 
 **Database URIs**:
 ```bash
-# For Docker MongoDB
+# For Docker MongoDB (includes database name)
 MONGO_DB_URI=mongodb://cashlens:cashlens123@mongodb:27017/cashlens?authSource=admin
 
-# For Docker MySQL
-MYSQL_DB_URI=cashlens:cashlens123@tcp(mysql:3306)/cashlens
+# For Docker MySQL (database name appended automatically from DB_NAME)
+MYSQL_DB_URI=cashlens:cashlens123@tcp(mysql:3306)
 ```
 
 See `.env.sample` for all available configuration options.

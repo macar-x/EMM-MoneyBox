@@ -62,7 +62,7 @@ services:
     environment:
       DB_TYPE: ${DB_TYPE:-mongodb}
       MONGO_DB_URI: ${MONGO_DB_URI:-mongodb://${MONGO_ROOT_USERNAME:-cashlens}:${MONGO_ROOT_PASSWORD:-cashlens123}@mongodb:27017/${DB_NAME:-cashlens}?authSource=admin}
-      MYSQL_DB_URI: ${MYSQL_DB_URI:-${MYSQL_USER:-cashlens}:${MYSQL_PASSWORD:-cashlens123}@tcp(mysql:3306)/${DB_NAME:-cashlens}}
+      MYSQL_DB_URI: ${MYSQL_DB_URI:-${MYSQL_USER:-cashlens}:${MYSQL_PASSWORD:-cashlens123}@tcp(mysql:3306)}
       DB_NAME: ${DB_NAME:-cashlens}
       LOG_FILE: ${LOG_FILE:-/app/logs/cashlens.log}
       LOG_LEVEL: ${LOG_LEVEL:-info}
